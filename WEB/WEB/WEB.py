@@ -7,14 +7,30 @@ import requests
 from utils.extract import *
 from utils.voc_grading_and_detail import *
 from utils.create_pdf import *
+from utils.grammar_pattern import *
+from utils.week9 import *
 from readability import Document
+
+from utils.create_pdf.create_flashcard import *
+from utils.create_pdf.create_article import *
+from utils.create_pdf.create_wordlist import *
+from utils.create_pdf.create_grammar import *
+from utils.create_pdf.stylesheet import *
+
+from pprint import pprint
+import json
 
 app = Flask(__name__ )
 
 stylesheet = stylesheet() # pdf stylesheet
+egp = load_egp() # grammar pattern
 
 if not os.path.exists('download'):
     os.makedirs('download')
+    
+week9 = open('utils/week9.txt', 'r')
+week9 = week9.readline()
+week9 = eval(week9)
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -32,12 +48,14 @@ def handle_data():
     content = clean_content(doc.summary())
 
     grade, wordlist = voc_grading_and_detail(content, user_level)
-    
+    pats = find_pattern(content, week9)
+    # pprint(json.dumps(pats))
     # create pdf
-    create_article(title, content, stylesheet, user_level, grade, 'download/'+title+'_article.pdf')
+    new = create_article(title, content, stylesheet, user_level, grade, 'download/'+title+'_article.pdf')
     create_wordlist(wordlist, 'download/'+title+'_wordlist.pdf')
+    # create_grammar(title, original, stylesheet, egp, 'download/'+title+'_grammar.pdf')
     
-    return render_template('format.html', title=title, publish_date=publish_date, content=content,
+    return render_template('format.html', title=title, publish_date=publish_date, content=new,
                            user_level=user_level, grade=grade)
 
 @app.route('/download/<filename>', methods=['GET'])
