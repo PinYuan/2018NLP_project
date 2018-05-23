@@ -1,0 +1,10 @@
+crawler/EVP/data/
+crawler/EVP/transport_data/
+crawler/wordnet/data/
+WEB/WEB/download/
+WEB/WEB/nohup.out
+WEB/WEB/static/img/
+WEB/WEB/utils/*.ipynb
+WEB/WEB/utils/geniatagger-3.0.2/
+WEB/WEB/utils/*.txt
+*.pyc

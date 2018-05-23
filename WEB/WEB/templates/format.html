@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>format</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/format.css') }}">
+  </head>
+  <body>
+    <form action="/" method="post">
+      <input type="submit" value="Return">    
+    </form> 
+    <a href="{{ '/download/%s_article.pdf' % title}}" target="blank"><button>Article</button></a>
+    <a href="{{ '/download/%s_wordlist.pdf' % title}}" target="blank"><button>Wordlist</button></a>
+    <!--<a href="/download/wordlist" target="blank"><button>Wordlist</button></a>-->
+      
+    <h1>{{title}}</h1>
+    <div class="container">
+      <div class="post">
+        <div class="date">{{publish_date}}</div>
+          {% for c in content %}
+            {% set type = c[0] %}
+            {% if type == 'p' %}
+              <p>{{c[1]|safe}}</p>
+            {% elif type == 'h2' %}
+              <h2>{{text}}</h2>
+            {% elif type == 'h3' %}
+              <h3>{{text}}</h3>
+            {% endif %}  
+          {% endfor %}
+      </div>
+    </div> 
+  </body>
+</html>
