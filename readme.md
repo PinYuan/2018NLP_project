@@ -4,9 +4,10 @@
 
 [google-drive link](https://drive.google.com/drive/u/2/folders/18pnif3i3Rw4yPXInUloBQ65l6AsUgKm2)
 
-1. WEB/WEB/utils/geniatagger-3.0.2/
-2. crawler/EVP/data/
+1. crawler/EVP/data/
+2. WEB/WEB/utils/geniatagger-3.0.2/
 3. WEB/WEB/static/img/
+4. WEB/WEB/utils/data
 
 ## How to start the server
 
