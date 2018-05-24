@@ -7,4 +7,5 @@ WEB/WEB/static/img/
 WEB/WEB/utils/*.ipynb
 WEB/WEB/utils/geniatagger-3.0.2/
 WEB/WEB/utils/*.txt
+WEB/WEB/utils/data/
 *.pyc

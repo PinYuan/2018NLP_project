@@ -3,8 +3,9 @@ from reportlab.pdfgen import canvas
 import textwrap
 import ast
 import codecs
+import re
 
-def create_wordlist(wordlist, filename):
+def create_wordlist(wordlist, patterns, filename):
     from reportlab.lib.units import inch
     max_length = 90
     max_y = 800
@@ -49,5 +50,29 @@ def create_wordlist(wordlist, filename):
                 c.setFont('Helvetica', 10)
                 c.drawString(50 + 80, max_y - offset, key[1][state])
         offset = offset+30
-
+    
+    c.showPage()
+    offset = 0
+    
+    c.setFont('Helvetica-Bold', 25)
+    c.drawString(50, max_y - offset, 'Pattern')
+    c.setFont('Helvetica-Bold', 10)
+    offset = offset+15
+    for word, pat, sent, highlight in patterns:
+        if offset>=730:
+            c.showPage()
+            offset = 0
+        offset = offset+15
+        c.drawString(50, max_y - offset, word+'    '+pat)
+        
+        r = re.search('(?P<f>\W)'+highlight+'(?P<b>\W)', sent) # cookies
+        if r:
+            f = r.group('f')
+            b = r.group('b')
+            sent = sent.replace(f+highlight+b, f+'<b>'+highlight+'</b>'+b)
+        else: # About ...
+            r = re.match(highlight, sent)
+            sent = sent.replace(highlight, '<b>'+highlight+'</b>')
+        offset = offset+10
+        c.drawString(50, max_y - offset, sent)
     c.save()
