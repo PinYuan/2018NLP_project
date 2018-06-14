@@ -17,6 +17,8 @@ from collections import defaultdict, Counter
 import re
 from nltk.corpus import wordnet # To get words in dictionary with their parts of speech
 from nltk.stem import WordNetLemmatizer # lemmatizes word based on it's parts of speech
+from utils.senttag import parse_sent
+from pprint import pprint
 
 def get_pos(word):
     w_synsets = wordnet.synsets(word)
@@ -43,14 +45,16 @@ def isVerb():
         word, subDict = line.split('\t')
         #myDict[word] = eval(subDict)
         #verb.add(word)
-        if get_pos(word) == 'v':
-            verb.add(word)
+        verb.add(word)
     file.close()
     return verb
 
 
 def create_article(title, content, stylesheet, filename):  
     verb = isVerb()
+    noun = set()
+    adj = set()
+    
     doc = SimpleDocTemplate(filename, pagesize=letter)
     parts = []
     
@@ -66,32 +70,60 @@ def create_article(title, content, stylesheet, filename):
         if _type == 'p':
             new_para = ''
             for sent in text:
-                words = sent.split()
+                parse = parse_sent(sent)
+                # pprint(parse)
+                pos_parse = [y for x in parse[2] for y in x.split()]
+                words = [y for x in parse[0] for y in x.split()]
+                lemma_words = [y for x in parse[1] for y in x.split()]
+                pos_num = 0
                 for word in words:
+                    pos = pos_parse[pos_num]
                     clean_word = re.sub('^[^a-zA-Z0-9]', '', word) # "word
                     clean_word = re.sub('[^a-zA-Z0-9]$', '', clean_word) # word?
-                    if not re.match('\w', clean_word): continue # --
+                    if not re.match('\w', clean_word):
+                        pos_num += 1
+                        continue # --
                     lemma_word = lemmatization(clean_word).lower()
-                    
-                    if lemma_word in verb:
+                    if 'V' in pos and lemma_word in verb:
                         r = re.search('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
                         if r:
                             f = r.group('f')
                             b = r.group('b')
-                            sent = sent.replace(f+clean_word+b, f+'<span><u><b>'+clean_word+'</b></u></span>'+b)
+                            sent = sent.replace(f+clean_word+b, f+'<span data-pos="V"><u><b>'+clean_word+'</b></u></span>'+b)
                         else: # About ...
                             r = re.match(clean_word, sent)
-                            sent = sent.replace(clean_word, '<span><u><b>'+clean_word+'</b></u></span>')
+                            sent = sent.replace(clean_word, '<span data-pos="V"><u><b>'+clean_word+'</b></u></span>')
+                    elif 'N' in pos and lemma_word in noun:
+                        r = re.search('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
+                        if r:
+                            f = r.group('f')
+                            b = r.group('b')
+                            sent = sent.replace(f+clean_word+b, f+'<span data-Pos="N"><u><b>'+clean_word+'</b></u></span>'+b)
+                        else: # About ...
+                            r = re.match(clean_word, sent)
+                            sent = sent.replace(clean_word, '<span data-Pos="N"><u><b>'+clean_word+'</b></u></span>')
+                    elif 'J' in pos and lemma_word in adj:
+                        r = re.search('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
+                        if r:
+                            f = r.group('f')
+                            b = r.group('b')
+                            sent = sent.replace(f+clean_word+b, f+'<span data-Pos="ADJ"><u><b>'+clean_word+'</b></u></span>'+b)
+                        else: # About ...
+                            r = re.match(clean_word, sent)
+                            sent = sent.replace(clean_word, '<span data-Pos="ADJ"><u><b>'+clean_word+'</b></u></span>')
+                    pos_num += 1
                 new_para += sent+' '
-            c[1] = new_para
+            c[1] = new_para.replace('<span data-pos="V"><u><b>', '<span><u><b>').replace('<span data-pos="N"><u><b>', '<span><u><b>').replace('<span data-pos="ADJ"><u><b>', '<span><u><b>')
             parts.append(Paragraph('<font size=14><b>[' + str(para_num) + ']</b></font> '+c[1], stylesheet['default']))
             para_num += 1
+            new_content.append(['p', new_para])
             
         elif _type == 'h2':
             parts.append(Paragraph(text, stylesheet['h2']))
+            new_content.append(['h2', text])
         elif _type == 'h3':
             parts.append(Paragraph(text, stylesheet['h3']))
-        new_content.append(c)
+            new_content.append(['h3', text])
         
     doc.build(parts)
     return new_content
