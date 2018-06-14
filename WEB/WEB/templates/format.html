@@ -75,16 +75,18 @@
                             <a type="button" class="btn btn-primary" href="#" target="blank">Quiz</a>
                             <a type="button" class="btn btn-primary" href="#" target="blank">Anki-word flash card</a>
                         </div>-->
-                        {% for c in content %}
-                            {% set type = c[0] %}
-                            {% if type == 'p' %}
-                                <p>{{c[1]|safe}}</p>
-                            {% elif type == 'h2' %}
-                                <h2>{{text}}</h2>
-                            {% elif type == 'h3' %}
-                                <h3>{{text}}</h3>
-                            {% endif %}  
-                        {% endfor %}
+                        <div id="text-article">
+                            {% for c in content %}
+                                {% set type = c[0] %}
+                                {% if type == 'p' %}
+                                    <p>{{c[1]|safe}}</p>
+                                {% elif type == 'h2' %}
+                                    <h2>{{text}}</h2>
+                                {% elif type == 'h3' %}
+                                    <h3>{{text}}</h3>
+                                {% endif %}  
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
 
@@ -106,11 +108,8 @@
                 </button>
             </div>
           </div>
-          <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <article>
-              <h1>Right Half</h1>
-              <p>If your knees aren't green by the end of the day, you ought to seriously re-examine your life.</p>
-            </article>
+          <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="myTable">
+           
           </div>
         <script>
         // When the user scrolls down 20px from the top of the document, show the button
@@ -129,6 +128,46 @@
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
         }
+          var test = document.getElementById('text-article');
+          function whatClicked(evt) {
+
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(xmlhttp.responseText)
+
+                    var myTable = '<table class="table table-striped"> <tr><th>pattern</th><th>percent</th><th>obj</th><th>example</th> </tr>'
+
+                    for (patIndex in response.patterns) {
+                        var patPercent = response.patterns[patIndex]
+                        var patPair = response.patterns[patIndex].split("%")
+                        var pat = patPair[0]
+                        var percent = patPair[1]
+
+                        myTable += "<tr><td>" + pat + "</td><td>"
+                        myTable += percent + "%</td><td>"
+                        for (objIndex in response.objs[patPercent]) {
+                            var obj = response.objs[patPercent][objIndex].split("%")[0]
+                            myTable += obj + "<br>"
+                        }
+                        myTable += "</td><td>"
+                        for (objIndex in response.objs[patPercent]) {
+                            var obj = response.objs[patPercent][objIndex]
+                            myTable += response.table[patPercent][obj] + "<br>"
+                        }
+                        myTable += "</td></tr>"
+                    }
+                    myTable += "</table>"
+                    document.getElementById("myTable").innerHTML = myTable;
+                }
+            };
+            xmlhttp.open('POST', '/ajax')
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            var postVars = 'word='+evt.target.firstChild.nodeValue
+            xmlhttp.send(postVars);
+
+          }  
+          test.addEventListener("click", whatClicked, false);
         </script>
     </body>
 </html>

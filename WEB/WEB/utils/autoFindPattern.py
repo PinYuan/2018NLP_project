@@ -47,7 +47,7 @@ whWords = ['who', 'what', 'when', 'where', 'whether', 'how', 'why', 'if']
 semiReservedWords = dict([(word, 'prep')for word in pgPreps] + [('it', 'n'), ('way', 'n')])
 
 collinsVerb = defaultdict(lambda: [])
-with open('utils/data/autoFindGramPat/_collins.pgv.txt', 'r') as verbFile:
+with open('utils/data/autoFindPattern/_collins.pgv.txt', 'r') as verbFile:
     for line in verbFile:
         verb, pat = line.strip('\n').split('\t')
         collinsVerb[verb] += [pat]

@@ -40,7 +40,7 @@ def get_pos(word):
 #myDict = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0))) 
 def isVerb():
     verb = set()
-    file = open('utils/data/statistics.txt', 'r')
+    file = open('utils/data/autoFindPattern/statistics(V).txt', 'r')
     for line in file:
         word, subDict = line.split('\t')
         #myDict[word] = eval(subDict)
@@ -50,7 +50,7 @@ def isVerb():
     return verb
 
 
-def create_article(title, content, stylesheet, filename):  
+def create_article(title, content, stylesheet, filename, dictV, dictN, dictAdj):  
     verb = isVerb()
     noun = set()
     adj = set()
