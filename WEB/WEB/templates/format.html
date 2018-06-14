@@ -1,34 +1,129 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>format</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/format.css') }}">
-  </head>
-  <body>
-    <form action="/" method="post">
-      <input type="submit" value="Return">    
-    </form> 
-    <a href="{{ '/download/%s_article.pdf' % title}}" target="blank"><button>Article</button></a>
-    <a href="{{ '/download/%s_wordlist.pdf' % title}}" target="blank"><button>Wordlist</button></a>
-    <!--<a href="/download/wordlist" target="blank"><button>Wordlist</button></a>-->
-      
-    <h1>{{title}}</h1>
-    <div class="container">
-      <div class="post">
-        <div class="date">{{publish_date}}</div>
-          {% for c in content %}
-            {% set type = c[0] %}
-            {% if type == 'p' %}
-              <p>{{c[1]|safe}}</p>
-            {% elif type == 'h2' %}
-              <h2>{{text}}</h2>
-            {% elif type == 'h3' %}
-              <h3>{{text}}</h3>
-            {% endif %}  
-          {% endfor %}
-      </div>
-    </div> 
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Word Learning</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <style>
+            body {
+                font-family: "Rubik", -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+                font-size: 16px;
+                scroll-behavior: smooth;
+            }
+            .html {
+                scroll-behavior: smooth;
+            }
+            .date {
+                color: gray;
+                font-weight: bold;
+            }
+            .container {
+                max-width: 1000px;
+            }
+            #totop {
+                display: none; /* Hidden by default */
+                position: fixed; /* Fixed/sticky position */
+                bottom: 20px; /* Place the button at the bottom of the page */
+                right: 30px; /* Place the button 30px from the right */
+                z-index: 99; /* Make sure it does not overlap */
+                border: none; /* Remove borders */
+                outline: none; /* Remove outline */
+                background-color: grey; /* Set a background color */
+                color: white; /* Text color */
+                cursor: pointer; /* Add a mouse pointer on hover */
+                padding: 15px; /* Some padding */
+                border-radius: 10px; /* Rounded corners */
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>                        
+              </button>
+              <a class="navbar-brand" href="#">WORD LEARNING</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="container">
+            <form action="/" method="post" class="container">
+                <button type="submit" class="btn btn-default">Return</button>
+            </form>
+            
+            <div class="container text-body">
+                <h1>{{title}}</h1>
+                <div class="post">
+                    <div class="date" style="margin: 10px 0;">{{publish_date}}</div>
+                    <div class="btn-group" style="margin: 10px 0 20px 0;">
+                        <a type="button" class="btn btn-primary" href="{{ '/download/%s_article.pdf' % title}}" target="blank">Article</a>
+                        <a type="button" class="btn btn-primary" href="{{ '/download/%s_wordlist.pdf' % title}}" target="blank">Wordlist</a>
+                        <a type="button" class="btn btn-primary" href="#" target="blank">Quiz</a>
+                        <a type="button" class="btn btn-primary" href="#" target="blank">Anki-word flash card</a>
+                    </div>
+                    {% for c in content %}
+                        {% set type = c[0] %}
+                        {% if type == 'p' %}
+                            <p>{{c[1]|safe}}</p>
+                        {% elif type == 'h2' %}
+                            <h2>{{text}}</h2>
+                        {% elif type == 'h3' %}
+                            <h3>{{text}}</h3>
+                        {% endif %}  
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="btn-group container" style="margin: 20px 0;">
+                <a type="button" class="btn btn-primary" href="{{ '/download/%s_article.pdf' % title}}" target="blank">Article</a>
+                <a type="button" class="btn btn-primary" href="{{ '/download/%s_wordlist.pdf' % title}}" target="blank">Wordlist</a>
+                <a type="button" class="btn btn-primary" href="#" target="blank">Quiz</a>
+                <a type="button" class="btn btn-primary" href="#" target="blank">Anki-word flash card</a>
+            </div>
+            <form action="/" method="post" class="container">
+                <button type="submit" class="btn btn-default">Return</button>
+            </form>
+            <div style="height: 100px;"></div>
+        </div>
+        
+        <div>
+            <button onclick="topFunction()" id="totop" title="Go to top" type="button" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-chevron-up"></span> TOP
+            </button>
+        </div>
+
+
+
+        <script>
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("totop").style.display = "block";
+            } else {
+                document.getElementById("totop").style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+        </script>
+    </body>
 </html>

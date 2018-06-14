@@ -1,5 +1,11 @@
 # grammar
 from utils.grammar_pattern import *
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, KeepTogether
+
+from reportlab.lib.enums import TA_LEFT, TA_CENTER
 
 def create_grammar(title, content, stylesheet, egp, filename):
     doc = SimpleDocTemplate(filename, pagesize=letter)
@@ -7,28 +13,12 @@ def create_grammar(title, content, stylesheet, egp, filename):
     
     parts.append(Paragraph(title, stylesheet['title']))
    
-    for sentences in content:
-        if not (sentences.startswith('[h2]') or sentences.startswith('[h3]')):
-            sententces = sentences.replace('? ', '?\t')
-            sententces = sentences.replace('! ', '?\t')
-            sentences = sentences.replace('...', '')
-            sentences = sentences.replace('"', '')
-            
-            sen_pat = re.compile('\. [A-Z]')
-            break_sens = []
-            if sen_pat.search(sentences)!= None:
-                break_sens = sen_pat.findall(sentences)
-                upperWords = []
-                for _break in break_sens:
-                    upperWord = _break[2]
-                    sentences = sentences.replace(_break, '.\t'+upperWord)
-                
-            sentences = sentences.split('\t')
-
+    for tag, sentences in content:
+        if tag not in ['h2', 'h3']:
             for sentence in sentences:
                 if sentence == '': continue
                 pat = isPattern(sentence, egp)
-              
+                
                 level, cando, examps = egp[pat]
                 examps = [examp.strip() for examp in examps.split('|||')]
                 
@@ -37,4 +27,6 @@ def create_grammar(title, content, stylesheet, egp, filename):
                 for examp in examps:
                     parts.append(Paragraph(examp, stylesheet['default']))
     doc.build(parts)
+       
+
        

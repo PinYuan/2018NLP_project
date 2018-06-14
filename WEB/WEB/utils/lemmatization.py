@@ -1,9 +1,9 @@
-from collections import Counter 
 import re
 from nltk.corpus import wordnet # To get words in dictionary with their parts of speech
 from nltk.stem import WordNetLemmatizer # lemmatizes word based on it's parts of speech
 from collections import defaultdict, Counter
 from pprint import pprint
+
 # index(1st_letter_of_word) - word : lemmetized_word
 noun_plus = defaultdict(lambda: defaultdict(lambda: ''))
 verb_plus = defaultdict(lambda: defaultdict(lambda: ''))
@@ -41,6 +41,7 @@ def get_pos(word):
     
     most_common_pos_list = pos_counts.most_common(3)
     # first indexer for getting the top POS from list, second indexer for getting POS from tuple( POS: count )
+
     return most_common_pos_list[0][0] 
 
 wnl = WordNetLemmatizer()
