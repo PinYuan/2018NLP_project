@@ -166,6 +166,20 @@
     </div>
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="patTable">
         <h1 style="color: white;">Click a Word</h1>
+        <!--form class="form-horizontal" onsubmit="return search()"-->
+            <div class="form-group">
+                <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10">
+                    <input class="form-control" type="text" id="search_word" name="word" placeholder="Type a word">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10" style="margin: 0 auto; float: none; margin-top: 20px;">
+                    <button onclick="search()" title="search" type="button" class="btn btn-default btn-sm">
+                        Search
+                    </button>
+                </div>
+            </div>
+        <!--/form-->
         <table class="table">
             <thead>
                 <tr>
@@ -193,13 +207,12 @@
 
         // When the user clicks on the button, scroll to the top of the document
         function topFunction() {
-            document.body.scrollTop = 0;
+            document.body.scrollTop = 0;s
             document.documentElement.scrollTop = 0;
         }
         var test = document.getElementById('text-article');
 
         function whatClicked(evt) {
-
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -250,6 +263,55 @@
 
         }
         test.addEventListener("click", whatClicked, false);
+        
+        function search() {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(xmlhttp.responseText)
+                    var word = document.getElementById("search_word").value.toUpperCase();
+                    if (word != null){
+                        var patTable = '<h1 style="color: white;"><span data-pos="'+ 'pos-x' +'">'  + word + '   ' + 'pos-x'.toLowerCase() + '.</span></h1><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>obj</th><th>example</th> </tr></thead><tbody>'
+
+                        for (patIndex in response.patterns) {
+                            var patPercent = response.patterns[patIndex]
+                            var patPair = response.patterns[patIndex].split("%")
+                            var pat = patPair[0]
+                            var percent = patPair[1]
+                            var rowNumber = 0;
+                            for (objIndex in response.objs[patPercent]) {
+                                rowNumber += 1;
+                            }
+                            patTable += "<tr><td rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>"+ percent + "%</td>"
+                            for (objIndex in response.objs[patPercent]) {
+                                if (objIndex == 0) {
+                                    var obj = response.objs[patPercent][objIndex].split("%")[0]
+                                    patTable += "<td>" + obj + "</td>"
+                                    obj = response.objs[patPercent][objIndex]
+                                    patTable += "<td>" + response.table[patPercent][obj] + "</td>"
+                                    patTable += "</tr>"
+                                } else {
+                                    patTable += "<tr>"
+                                    var obj = response.objs[patPercent][objIndex].split("%")[0]
+                                    patTable += "<td style='border-top: 1px solid white;'>" + obj + "</td>"
+                                    obj = response.objs[patPercent][objIndex]
+                                    patTable += "<td style='border-top: 1px solid white;'>" + response.table[patPercent][obj] + "</td>"
+                                    patTable += "</tr>"
+                                }
+                            }
+                        }
+                        patTable += "</tbody></table>"
+                        document.getElementById("patTable").innerHTML = patTable;
+                    }
+                }
+            };
+            xmlhttp.open('POST', '/ajax')
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            var postVars = 'word=' + document.getElementById("search_word").value + '&pos=x'
+
+            xmlhttp.send(postVars);
+
+        } 
     </script>
 </body>
 
