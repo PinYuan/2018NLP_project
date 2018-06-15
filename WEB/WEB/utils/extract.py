@@ -1,4 +1,5 @@
 import re
+import nltk
 try: 
     from urllib.request import urlopen, Request
 except:
@@ -42,8 +43,10 @@ def remove_a(text):
     
 def clean_content(content):
     def sentence_tokenize(content):
-        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', content)
-        return sentences
+        sent_text = nltk.sent_tokenize(content) 
+        sent_text = [sent for sent in sent_text if '\n' not in sent]
+        #sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', content)
+        return sent_text
     
     content = re.sub('(?is)<div.*?>', '<div>', content)
     content = re.sub('(?is)<p.*?>', '<p>', content)

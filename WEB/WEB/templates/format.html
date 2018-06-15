@@ -1,119 +1,187 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width">
-        <title>Word Learning</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-        <style>
-            body {
-                font-family: "Rubik", -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-                font-size: 16px;
-                scroll-behavior: smooth;
-            }
-            section {
-              width: 100%;
-            }
-            .html {
-                scroll-behavior: smooth;
-            }
-            .date {
-                color: gray;
-                font-weight: bold;
-            }
-            #totop {
-                display: none; /* Hidden by default */
-                position: fixed; /* Fixed/sticky position */
-                bottom: 20px; /* Place the button at the bottom of the page */
-                right: 30px; /* Place the button 30px from the right */
-                z-index: 99; /* Make sure it does not overlap */
-                border: none; /* Remove borders */
-                outline: none; /* Remove outline */
-                background-color: grey; /* Set a background color */
-                color: white; /* Text color */
-                cursor: pointer; /* Add a mouse pointer on hover */
-                padding: 15px; /* Some padding */
-                border-radius: 10px; /* Rounded corners */
-            }
-        </style>
-    </head>
-    <body>
-        <nav class="navbar navbar-default">
-          <div>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Word Learning</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <style>
+        *{
+            line-height: 1.6;
+        }
+        body {
+            font-family: "Verdana", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 18px;
+            scroll-behavior: smooth;
+        }        
+        section {
+            width: 100%;
+        }
+        p{
+            margin: 30px;
+        }
+        .html {
+            scroll-behavior: smooth;
+        }
+        .date {
+            color: gray;
+            font-weight: bold;
+        }
+        .leftDiv {
+            margin: 70px 5% 5% 5%;
+        }
+        .table>tbody>tr>td {
+            border-top: 2px solid white;
+        }
+        .table>thead>tr>th {
+            border-bottom: 2px solid white;
+        }
+        .table{
+            margin-top: 20px;
+            margin-bottom: 80px;
+        }
+        #totop {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Fixed/sticky position */
+            bottom: 20px;
+            /* Place the button at the bottom of the page */
+            right: 30px;
+            /* Place the button 30px from the right */
+            z-index: 99;
+            /* Make sure it does not overlap */
+            border: none;
+            /* Remove borders */
+            outline: none;
+            /* Remove outline */
+            background-color: grey;
+            /* Set a background color */
+            color: white;
+            /* Text color */
+            cursor: pointer;
+            /* Add a mouse pointer on hover */
+            padding: 15px;
+            /* Some padding */
+            border-radius: 10px;
+            /* Rounded corners */
+        }
+        #patTable {
+            position: fixed;
+            top: 50px;
+            right: 0px;
+            overflow: auto;
+            overflow-x: hidden;
+            background: #B0E8E6;
+            color: black;
+            height: 95%;
+            padding: 5px 40px;
+        }
+        #text-article>p>[data-pos="V"]:hover {
+            color: #EA442E; /* red */
+        }
+        #text-article>p>[data-pos="N"]:hover {
+            color: #35AF6E; /* green */
+        }
+        #text-article>p>[data-pos="ADJ"]:hover {
+            color: #3FA7D6; /* blue */
+        }
+        #patTable>h1>[data-pos="V"]{
+            color: #E72F17; /* red */
+        }
+        #patTable>h1>[data-pos="N"]{
+            color: #35AF6E; /* green */
+        }
+        #patTable>h1>[data-pos="ADJ"]{
+            color: #2D9DD1; /* blue */
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div>
             <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>                        
-              </button>
-              <a class="navbar-brand" href="#">WORD LEARNING</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">WORD LEARNING</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
-              <ul class="nav navbar-nav navbar-right">
-                <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-              </ul>
+                <ul class="nav navbar-nav navbar-right" style="margin-right: auto;">
+                    <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                </ul>
             </div>
-          </div>
-        </nav>
-          <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <div>
-                <form action="/" method="post">
-                    <button type="submit" class="btn btn-default">Return</button>
-                </form>
+        </div>
+    </nav>
+    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        <div class="leftDiv">
+            <form action="/" method="post">
+                <button type="submit" class="btn btn-default">Return</button>
+            </form>
 
-                <div class="text-body">
-                    <h1>{{title}}</h1>
-                    <div class="post">
-                        <div class="date" style="margin: 10px 0;">{{publish_date}}</div>
-                        <!--<div class="btn-group" style="margin: 10px 0 20px 0;">
+            <div class="text-body">
+                <h1>{{title}}</h1>
+                <div class="post">
+                    <div class="date" style="margin: 10px 0;">{{publish_date}}</div>
+                    <!--<div class="btn-group" style="margin: 10px 0 20px 0;">
                             <a type="button" class="btn btn-primary" href="{{ '/download/%s_article.pdf' % title}}" target="blank">Article</a>
                             <a type="button" class="btn btn-primary" href="{{ '/download/%s_wordlist.pdf' % title}}" target="blank">Wordlist</a>
                             <a type="button" class="btn btn-primary" href="#" target="blank">Quiz</a>
                             <a type="button" class="btn btn-primary" href="#" target="blank">Anki-word flash card</a>
                         </div>-->
-                        <div id="text-article">
-                            {% for c in content %}
-                                {% set type = c[0] %}
-                                {% if type == 'p' %}
-                                    <p>{{c[1]|safe}}</p>
-                                {% elif type == 'h2' %}
-                                    <h2>{{text}}</h2>
-                                {% elif type == 'h3' %}
-                                    <h3>{{text}}</h3>
-                                {% endif %}  
-                            {% endfor %}
-                        </div>
+                    <div id="text-article">
+                        {% for c in content %} {% set type = c[0] %} {% if type == 'p' %}
+                        <p>{{c[1]|safe}}</p>
+                        {% elif type == 'h2' %}
+                        <h2>{{text}}</h2> {% elif type == 'h3' %}
+                        <h3>{{text}}</h3> {% endif %} {% endfor %}
                     </div>
                 </div>
+            </div>
 
-                <!--<div class="btn-group container" style="margin: 20px 0;">
+            <!--<div class="btn-group container" style="margin: 20px 0;">
                     <a type="button" class="btn btn-primary" href="{{ '/download/%s_article.pdf' % title}}" target="blank">Article</a>
                     <a type="button" class="btn btn-primary" href="{{ '/download/%s_wordlist.pdf' % title}}" target="blank">Wordlist</a>
                     <a type="button" class="btn btn-primary" href="#" target="blank">Quiz</a>
                     <a type="button" class="btn btn-primary" href="#" target="blank">Anki-word flash card</a>
                 </div>-->
-                <form action="/" method="post">
-                    <button type="submit" class="btn btn-default">Return</button>
-                </form>
-                <div style="height: 100px;"></div>
-            </div>
+            <form action="/" method="post">
+                <button type="submit" class="btn btn-default">Return</button>
+            </form>
+        </div>
 
-            <div>
-                <button onclick="topFunction()" id="totop" title="Go to top" type="button" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-chevron-up"></span> TOP
-                </button>
-            </div>
-          </div>
-          <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="myTable">
-           
-          </div>
-        <script>
+        <div>
+            <button onclick="topFunction()" id="totop" title="Go to top" type="button" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-chevron-up"></span> TOP
+            </button>
+        </div>
+    </div>
+    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" id="patTable">
+        <h1 style="color: white;">Click a Word</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>pattern</th>
+                    <th style="text-align: center;">percent</th>
+                    <th>obj</th>
+                    <th>example</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <script>
         // When the user scrolls down 20px from the top of the document, show the button
-        window.onscroll = function() {scrollFunction()};
+        window.onscroll = function() {
+            scrollFunction()
+        };
 
         function scrollFunction() {
             if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
@@ -128,46 +196,61 @@
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
         }
-          var test = document.getElementById('text-article');
-          function whatClicked(evt) {
+        var test = document.getElementById('text-article');
+
+        function whatClicked(evt) {
 
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(xmlhttp.responseText)
+                    var word = evt.target.parentElement.getAttribute("data-word").toUpperCase();
+                    if (word != null){
+                        var patTable = '<h1 style="color: white;"><span data-pos="'+ evt.target.parentElement.getAttribute("data-pos") +'">'  + word + '   ' + evt.target.parentElement.getAttribute("data-pos").toLowerCase() + '.</span></h1><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>obj</th><th>example</th> </tr></thead><tbody>'
 
-                    var myTable = '<table class="table table-striped"> <tr><th>pattern</th><th>percent</th><th>obj</th><th>example</th> </tr>'
-
-                    for (patIndex in response.patterns) {
-                        var patPercent = response.patterns[patIndex]
-                        var patPair = response.patterns[patIndex].split("%")
-                        var pat = patPair[0]
-                        var percent = patPair[1]
-
-                        myTable += "<tr><td>" + pat + "</td><td>"
-                        myTable += percent + "%</td><td>"
-                        for (objIndex in response.objs[patPercent]) {
-                            var obj = response.objs[patPercent][objIndex].split("%")[0]
-                            myTable += obj + "<br>"
+                        for (patIndex in response.patterns) {
+                            var patPercent = response.patterns[patIndex]
+                            var patPair = response.patterns[patIndex].split("%")
+                            var pat = patPair[0]
+                            var percent = patPair[1]
+                            var rowNumber = 0;
+                            for (objIndex in response.objs[patPercent]) {
+                                rowNumber += 1;
+                            }
+                            patTable += "<tr><td rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>"+ percent + "%</td>"
+                            for (objIndex in response.objs[patPercent]) {
+                                if (objIndex == 0) {
+                                    var obj = response.objs[patPercent][objIndex].split("%")[0]
+                                    patTable += "<td>" + obj + "</td>"
+                                    obj = response.objs[patPercent][objIndex]
+                                    patTable += "<td>" + response.table[patPercent][obj] + "</td>"
+                                    patTable += "</tr>"
+                                } else {
+                                    patTable += "<tr>"
+                                    var obj = response.objs[patPercent][objIndex].split("%")[0]
+                                    patTable += "<td style='border-top: 1px solid white;'>" + obj + "</td>"
+                                    obj = response.objs[patPercent][objIndex]
+                                    patTable += "<td style='border-top: 1px solid white;'>" + response.table[patPercent][obj] + "</td>"
+                                    patTable += "</tr>"
+                                }
+                            }
                         }
-                        myTable += "</td><td>"
-                        for (objIndex in response.objs[patPercent]) {
-                            var obj = response.objs[patPercent][objIndex]
-                            myTable += response.table[patPercent][obj] + "<br>"
-                        }
-                        myTable += "</td></tr>"
+                        patTable += "</tbody></table>"
+                        document.getElementById("patTable").innerHTML = patTable;
                     }
-                    myTable += "</table>"
-                    document.getElementById("myTable").innerHTML = myTable;
                 }
             };
             xmlhttp.open('POST', '/ajax')
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-            var postVars = 'word='+evt.target.firstChild.nodeValue
+                //alert(evt.target.parentElement.parentElement.getAttribute("data-word"))
+            var postVars = 'word=' + evt.target.parentElement.getAttribute("data-word") + '&pos=' + evt.target.parentElement.getAttribute("data-pos")
+                //var postVars = 'word='+evt.target.firstChild.nodeValue+'&pos=V'
+
             xmlhttp.send(postVars);
 
-          }  
-          test.addEventListener("click", whatClicked, false);
-        </script>
-    </body>
+        }
+        test.addEventListener("click", whatClicked, false);
+    </script>
+</body>
+
 </html>

@@ -38,23 +38,10 @@ def get_pos(word):
 
 # Read statistics file
 #myDict = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0))) 
-def isVerb():
-    verb = set()
-    file = open('utils/data/autoFindPattern/statistics(V).txt', 'r')
-    for line in file:
-        word, subDict = line.split('\t')
-        #myDict[word] = eval(subDict)
-        #verb.add(word)
-        verb.add(word)
-    file.close()
-    return verb
 
 
-def create_article(title, content, stylesheet, filename, dictV, dictN, dictAdj):  
-    verb = isVerb()
-    noun = set()
-    adj = set()
-    
+
+def create_article(title, content, stylesheet, filename, verb, noun, adj):    
     doc = SimpleDocTemplate(filename, pagesize=letter)
     parts = []
     
@@ -64,56 +51,60 @@ def create_article(title, content, stylesheet, filename, dictV, dictN, dictAdj):
     
     para_num = 1
     new_content = []
+    word_list = set()
     for c in content:
         _type = c[0]
         text = c[1]
         if _type == 'p':
             new_para = ''
+            _tag_para = ''
             for sent in text:
+                _sent = sent
                 parse = parse_sent(sent)
-                # pprint(parse)
                 pos_parse = [y for x in parse[2] for y in x.split()]
                 words = [y for x in parse[0] for y in x.split()]
                 lemma_words = [y for x in parse[1] for y in x.split()]
                 pos_num = 0
+                word_set = set()
                 for word in words:
+                    lemma_word = lemma_words[pos_num]
+                    if lemma_word in word_set:
+                        pos_num += 1
+                        continue
+                    word_set.add(lemma_word)
                     pos = pos_parse[pos_num]
                     clean_word = re.sub('^[^a-zA-Z0-9]', '', word) # "word
                     clean_word = re.sub('[^a-zA-Z0-9]$', '', clean_word) # word?
                     if not re.match('\w', clean_word):
                         pos_num += 1
                         continue # --
-                    lemma_word = lemmatization(clean_word).lower()
-                    if 'V' in pos and lemma_word in verb:
-                        r = re.search('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
-                        if r:
-                            f = r.group('f')
-                            b = r.group('b')
-                            sent = sent.replace(f+clean_word+b, f+'<span data-pos="V"><u><b>'+clean_word+'</b></u></span>'+b)
-                        else: # About ...
+                    pos_tag = ''
+                    if pos.startswith('VB') and lemma_word in verb: pos_tag = 'V'
+                    elif pos.startswith('NN') and lemma_word in noun: pos_tag = 'N'
+                    elif pos.startswith('J') and lemma_word in adj: pos_tag = 'ADJ'
+                        
+                    if pos_tag:
+                        if lemma_word not in word_list:
+                            word_list.add(lemma_word)
+                            bf_tag = ""
+                            bb_tag = ""
+                        else:
+                            pos_num += 1
+                            continue
+                        r = re.findall('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
+                        for f, b in r:
+                            if f != r[0][0]:
+                                continue
+                            sent = sent.replace(f+clean_word+b, f+'<span data-word="'+lemma_word+'" data-pos="'+pos_tag+'"><u>'+bf_tag+clean_word+bb_tag+'</u></span>'+b)
+                            _sent = _sent.replace(f+clean_word+b, f+'<span><u>'+bf_tag+clean_word+bb_tag+'</u></span>'+b)
+                        if not r: # About ...
                             r = re.match(clean_word, sent)
-                            sent = sent.replace(clean_word, '<span data-pos="V"><u><b>'+clean_word+'</b></u></span>')
-                    elif 'N' in pos and lemma_word in noun:
-                        r = re.search('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
-                        if r:
-                            f = r.group('f')
-                            b = r.group('b')
-                            sent = sent.replace(f+clean_word+b, f+'<span data-Pos="N"><u><b>'+clean_word+'</b></u></span>'+b)
-                        else: # About ...
-                            r = re.match(clean_word, sent)
-                            sent = sent.replace(clean_word, '<span data-Pos="N"><u><b>'+clean_word+'</b></u></span>')
-                    elif 'J' in pos and lemma_word in adj:
-                        r = re.search('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
-                        if r:
-                            f = r.group('f')
-                            b = r.group('b')
-                            sent = sent.replace(f+clean_word+b, f+'<span data-Pos="ADJ"><u><b>'+clean_word+'</b></u></span>'+b)
-                        else: # About ...
-                            r = re.match(clean_word, sent)
-                            sent = sent.replace(clean_word, '<span data-Pos="ADJ"><u><b>'+clean_word+'</b></u></span>')
+                            sent = sent.replace(clean_word, '<span data-word="'+lemma_word+'" data-pos="'+pos_tag+'"><u>'+bf_tag+clean_word+bb_tag+'</u></span>')
+                            _sent = _sent.replace(clean_word, '<span><u>'+bf_tag+clean_word+bb_tag+'</u></span>')
                     pos_num += 1
                 new_para += sent+' '
-            c[1] = new_para.replace('<span data-pos="V"><u><b>', '<span><u><b>').replace('<span data-pos="N"><u><b>', '<span><u><b>').replace('<span data-pos="ADJ"><u><b>', '<span><u><b>')
+                _tag_para += _sent+' '
+            c[1] = _tag_para
             parts.append(Paragraph('<font size=14><b>[' + str(para_num) + ']</b></font> '+c[1], stylesheet['default']))
             para_num += 1
             new_content.append(['p', new_para])
