@@ -4,10 +4,12 @@
 
 [google-drive link](https://drive.google.com/drive/u/2/folders/18pnif3i3Rw4yPXInUloBQ65l6AsUgKm2)
 
-1. crawler/EVP/data/
-2. WEB/WEB/utils/geniatagger-3.0.2/
-3. WEB/WEB/static/img/
-4. WEB/WEB/utils/data
+0. google-drive -> 2018NLP_project
+1. EVP/data/ -> crawler/EVP/data/
+2. WEB/geniatagger-3.0.2/ -> WEB/WEB/utils/geniatagger-3.0.2/
+3. WEB/img -> WEB/WEB/static/img/
+4. WEB/data -> WEB/WEB/utils/data/
+5. egp.txt -> WEB/WEB/utils/egp.txt
 
 ## How to start the server
 
