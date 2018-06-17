@@ -43,18 +43,43 @@
         }
 
         .table>tbody>tr>td {
-            border-top: 2px solid white;
-        }
-
-        .table>thead>tr>th {
-            border-bottom: 2px solid white;
+            border-top: 2px solid #f2f2f2;
         }
 
         .table {
             margin-top: 20px;
             margin-bottom: 80px;
+            line-height: 1.2;
+            
         }
-
+        
+        .table>thead {
+            background: #6c7ae0;
+            color: white;
+        }
+        .table>tbody {
+            background: white;
+            color: #666666;
+        }
+        /*第一欄第一列：左上*/
+        tr:first-child th:first-child{
+            border-top-left-radius: 10px;
+        }
+        /*第一欄最後列：左下
+        tr:last-child td:first-child{
+            border-bottom-left-radius: 10px;
+        }*/
+        /*最後欄第一列：右上*/
+        tr:first-child th:last-child{
+            border-top-right-radius: 10px;
+        }
+        /*最後欄第一列：右下
+        tr:last-child td:last-child{
+            border-bottom-right-radius: 10px;
+        }*/
+        .table-example {
+            border-top: 1px solid #f2f2f2;
+        }
         .form-item {
             display: flex;
             align-items: center;
@@ -65,80 +90,9 @@
         .form-control {
             height: 45px;
         }
-
-        /* The checkbox */
-
-        .checkbox {
-            margin-top: -5px;
-            margin-bottom: 0;
-            position: relative;
-            padding: 0 35px;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+        .table-pat {
+            color: #df5647;
         }
-
-        /* Hide the browser's default checkbox */
-
-        .checkbox input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        /* Create a custom checkbox */
-
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 25px;
-            width: 25px;
-            background-color: #eee;
-        }
-
-        /* On mouse-over, add a grey background color */
-
-        .checkbox:hover input~.checkmark {
-            background-color: #ccc;
-        }
-
-        /* When the checkbox is checked, add a blue background */
-
-        .checkbox input:checked~.checkmark {
-            background-color: #2196F3;
-        }
-
-        /* Create the checkmark/indicator (hidden when not checked) */
-
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-        }
-
-        /* Show the checkmark when checked */
-
-        .checkbox input:checked~.checkmark:after {
-            display: block;
-        }
-
-        /* Style the checkmark/indicator */
-
-        .checkbox .checkmark:after {
-            left: 9px;
-            top: 5px;
-            width: 5px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 3px 3px 0;
-            -webkit-transform: rotate(45deg);
-            -ms-transform: rotate(45deg);
-            transform: rotate(45deg);
-        }
-
         ::-webkit-scrollbar {
             display: none;
         }
@@ -158,7 +112,7 @@
             /* Remove borders */
             outline: none;
             /* Remove outline */
-            background-color: rgba(21, 222, 214, 0.5);
+            background-color: rgba(108, 122, 224, 0.5);
             /* 半透明 */
             /* Set a background color */
             color: black;
@@ -172,7 +126,7 @@
         }
 
         #totop:hover {
-            background-color: rgba(21, 222, 214, 0.8);
+            background-color: rgba(108, 122, 224, 0.8);
             /* 半透明 */
         }
 
@@ -182,7 +136,7 @@
             right: 0px;
             overflow: auto;
             overflow-x: hidden;
-            background: #BDFAF8;
+            background: #c4d3f6;
             color: black;
             height: 95%;
             padding: 5px 40px;
@@ -200,21 +154,46 @@
             color: #2196F3;
             /* blue */
         }
+        #patTable>h2 {
+            font-weight: bold;
+            text-align: center;
+        }
         #patTable>h2>[data-pos="V"] {
             color: #E72F17;
             /* red */
+            background: url("../static/img/v_burned.png") no-repeat top left;
+            display: inline-block;
+            height: 36px;
+            width: 47px;
+            background-size: cover;
+            transform: translateY(20%);
+            margin-left: 20px;
         }
 
         #patTable>h2>[data-pos="N"] {
             color: #17ED7B;
             /* green */
             /*text-shadow: 0 1px 1px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.2);*/
+            background: url("../static/img/n_burned.png") no-repeat top left;
+            display: inline-block;
+            height: 36px;
+            width: 47px;
+            background-size: cover;
+            transform: translateY(20%);
+            margin-left: 20px;
         }
 
         #patTable>h2>[data-pos="ADJ"] {
             /* color: #2D9DD1;  blue */
             color: #2196F3;
             /* blue */
+            background: url("../static/img/adj_burned.png") no-repeat top left;
+            display: inline-block;
+            height: 36px;
+            width: 47px;
+            background-size: cover;
+            transform: translateY(20%);
+            margin-left: 20px;
         }
     </style>
 </head>
@@ -228,7 +207,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">WORD LEARNING</a>
+                <a class="navbar-brand" href="#">Ling Booster</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right" style="margin-right: auto;">
@@ -316,7 +295,7 @@
                     <tr>
                         <th>pattern</th>
                         <th style="text-align: center;">percent</th>
-                        <th>obj</th>
+                        <th>col.</th>
                         <th>example</th>
                     </tr>
                 </thead>
@@ -359,7 +338,7 @@
                     var word = evt.target.parentElement.getAttribute("data-word").toUpperCase();
                     if (word != null) {
                         var pos = evt.target.parentElement.getAttribute("data-pos")
-                        var patTable = '<h2>' + word + '<span data-pos="' + pos + '">   ' + pos.toLowerCase() + '.</span></h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>obj</th><th>example</th> </tr></thead><tbody>';
+                        var patTable = '<h2>' + word + '<span data-pos="' + pos + '"></span></h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>';
                         for (patIndex in response.patterns[pos]) {
                             var patPercent = response.patterns[pos][patIndex]
                             var patPair = response.patterns[pos][patIndex].split("%")
@@ -369,7 +348,7 @@
                             for (objIndex in response.objs[pos][patPercent]) {
                                 rowNumber += 1;
                             }
-                            patTable += "<tr><td rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>" + percent + "%</td>"
+                            patTable += "<tr><td class='table-pat' rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>" + percent + "%</td>"
                             for (objIndex in response.objs[pos][patPercent]) {
                                 if (objIndex == 0) {
                                     var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
@@ -380,9 +359,9 @@
                                 } else {
                                     patTable += "<tr>"
                                     var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
-                                    patTable += "<td style='border-top: 1px solid white;'>" + obj + "</td>"
+                                    patTable += "<td class='table-example'>" + obj + "</td>"
                                     obj = response.objs[pos][patPercent][objIndex]
-                                    patTable += "<td style='border-top: 1px solid white;'>" + response.table[pos][patPercent][obj] + "</td>"
+                                    patTable += "<td class='table-example'>" + response.table[pos][patPercent][obj] + "</td>"
                                     patTable += "</tr>"
                                 }
                             }
@@ -414,7 +393,7 @@
                         for (let pos of ['V', 'N', 'ADJ']) {
                             if (pos in response.table === false) continue
                             
-                            patTable += '<h2>' + word + '<span data-pos="' + pos +'">   '+pos.toLowerCase()+'.</span></h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>obj</th><th>example</th> </tr></thead><tbody>'
+                            patTable += '<h2>' + word + '<span data-pos="' + pos +'"></span></h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>'
                             for (patIndex in response.patterns[pos]) {
                                 var patPercent = response.patterns[pos][patIndex]
                                 var patPair = response.patterns[pos][patIndex].split("%")
@@ -424,7 +403,7 @@
                                 for (objIndex in response.objs[pos][patPercent]) {
                                     rowNumber += 1;
                                 }
-                                patTable += "<tr><td rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>" + percent + "%</td>"
+                                patTable += "<tr><td class='table-pat' rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>" + percent + "%</td>"
                                 for (objIndex in response.objs[pos][patPercent]) {
                                     if (objIndex == 0) {
                                         var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
@@ -435,9 +414,9 @@
                                     } else {
                                         patTable += "<tr>"
                                         var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
-                                        patTable += "<td style='border-top: 1px solid white;'>" + obj + "</td>"
+                                        patTable += "<td class='table-example'>" + obj + "</td>"
                                         obj = response.objs[pos][patPercent][objIndex]
-                                        patTable += "<td style='border-top: 1px solid white;'>" + response.table[pos][patPercent][obj] + "</td>"
+                                        patTable += "<td class='table-example'>" + response.table[pos][patPercent][obj] + "</td>"
                                         patTable += "</tr>"
                                     }
                                 }
@@ -445,7 +424,7 @@
                             patTable += "</tbody></table>"
                         }
                         if (patTable == '') {
-                            patTable += '<h2>' + word + '</h2><h3>Not found</h3><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>obj</th><th>example</th> </tr></thead><tbody></tbody></table>'
+                            patTable += '<h2>' + word + '</h2><h3>Not found</h3><table class="table"><thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody></tbody></table>'
                         }
                         document.getElementById("patTable").innerHTML = patTable;
                     }
