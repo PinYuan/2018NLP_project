@@ -51,7 +51,7 @@ def create_article(title, content, stylesheet, filename, verb, noun, adj):
     
     para_num = 1
     new_content = []
-    word_list = set()
+    word_list = set(['word', 'span', 'data', 'pos', 'u', 'datum'])
     for c in content:
         _type = c[0]
         text = c[1]
