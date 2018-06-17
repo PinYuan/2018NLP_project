@@ -188,21 +188,18 @@
             padding: 5px 40px;
         }
 
-        #text-article>p>[data-pos="V"]:hover {
+        #text-article>p>[data-pos="V"]:hover, #text-article>p>[data-pos="V"].active {
             color: #E72F17;
             /* red */
         }
-
-        #text-article>p>[data-pos="N"]:hover {
+        #text-article>p>[data-pos="N"]:hover, #text-article>p>[data-pos="N"].active {
             color: #17ED7B;
             /* green */
         }
-
-        #text-article>p>[data-pos="ADJ"]:hover {
+        #text-article>p>[data-pos="ADJ"]:hover, #text-article>p>[data-pos="ADJ"].active {
             color: #2196F3;
             /* blue */
         }
-
         #patTable>h2>[data-pos="V"] {
             color: #E72F17;
             /* red */
@@ -289,7 +286,7 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <form onsubmit="search(); return false;">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-item">
-                    <input class="form-control" type="text" id="search_word" name="word" placeholder="Type/Click a word">
+                    <input class="form-control" type="text" id="search_word" name="word" autocomplete="off" placeholder="Type/Click a word  ex.make / make v n">
                     <button onclick="search()" class="btn btn-default btn-lg" type="button"><span class="glyphicon glyphicon-search"></span></button>
                 </div>
                 <!--div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-item">
@@ -345,6 +342,13 @@
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
         }
+        
+        $(document).ready(function() {
+            $("#text-article>p>span").click(function() {
+                $("#text-article>p>span").removeClass('active')
+                $(this).addClass('active')
+            });               
+       });
         var test = document.getElementById('text-article');
 
         function whatClicked(evt) {
@@ -404,7 +408,7 @@
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(xmlhttp.responseText)
-                    var word = document.getElementById("search_word").value.toUpperCase();
+                    var word = document.getElementById("search_word").value.split(' ')[0].toUpperCase();
                     var patTable = ''
                     if (word != null) {
                         for (let pos of ['V', 'N', 'ADJ']) {
@@ -441,7 +445,7 @@
                             patTable += "</tbody></table>"
                         }
                         if (patTable == '') {
-                            patTable += '<h2>' + word + '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>obj</th><th>example</th> </tr></thead><tbody><h3>Not found</h3>'
+                            patTable += '<h2>' + word + '</h2><h3>Not found</h3><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>obj</th><th>example</th> </tr></thead><tbody></tbody></table>'
                         }
                         document.getElementById("patTable").innerHTML = patTable;
                     }
