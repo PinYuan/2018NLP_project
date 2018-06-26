@@ -20,6 +20,11 @@ from nltk.stem import WordNetLemmatizer # lemmatizes word based on it's parts of
 from utils.senttag import parse_sent
 from pprint import pprint
 
+data_pwd = './utils/data/levelWord/'
+A_word = set()
+B_word = set()
+C_word = set()
+
 def get_pos(word):
     w_synsets = wordnet.synsets(word)
 
@@ -39,9 +44,32 @@ def get_pos(word):
 # Read statistics file
 #myDict = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0))) 
 
+def get_level_set():
+    f = open(data_pwd + 'A_level_word.txt', 'r')
+    words = f.readlines()[0].split()
+    for word in words:
+        A_word.add(word)
+    f.close()
+    
+    f = open(data_pwd + 'B_level_word.txt', 'r')
+    words = f.readlines()[0].split()
+    for word in words:
+        B_word.add(word)
+    f.close()
+    
+    f = open(data_pwd + 'C_level_word.txt', 'r')
+    words = f.readlines()[0].split()
+    for word in words:
+        C_word.add(word)
+    f.close()
 
-
-def create_article(title, content, stylesheet, filename, verb, noun, adj):    
+def create_article(title, user_level, content, stylesheet, filename, verb, noun, adj):
+    get_level_set()
+    level_set = set()
+    if user_level == 'A': level_set = A_word
+    elif user_level == 'B': level_set = B_word
+    else: level_set = C_word
+    
     doc = SimpleDocTemplate(filename, pagesize=letter)
     parts = []
     
@@ -68,7 +96,7 @@ def create_article(title, content, stylesheet, filename, verb, noun, adj):
                 word_set = set()
                 for word in words:
                     lemma_word = lemma_words[pos_num]
-                    if lemma_word in word_set:
+                    if lemma_word in word_set or lemma_word not in level_set:
                         pos_num += 1
                         continue
                     word_set.add(lemma_word)
