@@ -13,46 +13,36 @@
         * {
             line-height: 1.6;
         }
-
         body {
             font-family: "Verdana", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             font-size: 16px;
             scroll-behavior: smooth;
         }
-
         section {
             width: 100%;
         }
-
         p {
             font-size: 18px;
             margin: 30px 0;
         }
-
         .html {
             scroll-behavior: smooth;
         }
-
         .date {
             color: gray;
             font-weight: bold;
         }
-
         .leftDiv {
             margin: 70px 5% 5% 5%;
         }
-
         .table>tbody>tr>td {
             border-top: 2px solid #f2f2f2;
         }
-
         .table {
             margin-top: 20px;
             margin-bottom: 80px;
             line-height: 1.2;
-            
         }
-        
         .table>thead {
             background: #6c7ae0;
             color: white;
@@ -86,7 +76,6 @@
             justify-content: center;
             margin-top: 20px;
         }
-
         .form-control {
             height: 45px;
         }
@@ -96,7 +85,6 @@
         ::-webkit-scrollbar {
             display: none;
         }
-
         #totop {
             display: none;
             /* Hidden by default */
@@ -124,12 +112,10 @@
             border-radius: 10px;
             /* Rounded corners */
         }
-
         #totop:hover {
             background-color: rgba(108, 122, 224, 0.8);
             /* 半透明 */
         }
-
         #rightDiv {
             position: fixed;
             top: 50px;
@@ -141,16 +127,15 @@
             height: 95%;
             padding: 5px 40px;
         }
-
-        #text-article>p>[data-pos="V"]:hover, #text-article>p>[data-pos="V"].active {
+        #text-article>p [data-pos="V"]:hover, #text-article>p [data-pos="V"].active {
             color: #E72F17;
             /* red */
         }
-        #text-article>p>[data-pos="N"]:hover, #text-article>p>[data-pos="N"].active {
+        #text-article>p [data-pos="N"]:hover, #text-article>p [data-pos="N"].active {
             color: #17ED7B;
             /* green */
         }
-        #text-article>p>[data-pos="ADJ"]:hover, #text-article>p>[data-pos="ADJ"].active {
+        #text-article>p [data-pos="ADJ"]:hover, #text-article>p [data-pos="ADJ"].active {
             color: #2196F3;
             /* blue */
         }
@@ -169,7 +154,6 @@
             transform: translateY(20%);
             margin-left: 20px;
         }
-
         #patTable>h2>[data-pos="N"] {
             color: #17ED7B;
             /* green */
@@ -182,7 +166,6 @@
             transform: translateY(20%);
             margin-left: 20px;
         }
-
         #patTable>h2>[data-pos="ADJ"] {
             /* color: #2D9DD1;  blue */
             color: #2196F3;
@@ -323,8 +306,8 @@
         }
         
         $(document).ready(function() {
-            $("#text-article>p>span").click(function() {
-                $("#text-article>p>span").removeClass('active')
+            $("#text-article>p span").click(function() {
+                $("#text-article>p span").removeClass('active')
                 $(this).addClass('active')
             });               
        });
@@ -335,10 +318,19 @@
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(xmlhttp.responseText)
-                    var word = evt.target.parentElement.getAttribute("data-word").toUpperCase();
+                    var word = evt.target.getAttribute("data-word").toUpperCase();
                     if (word != null) {
-                        var pos = evt.target.parentElement.getAttribute("data-pos")
-                        var patTable = '<h2>' + word + '<span data-pos="' + pos + '"></span></h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>';
+                        var pos = evt.target.getAttribute("data-pos")
+                        var patTable = '<h2>' + word + '<span data-pos="' + pos + '"></span>'
+                        for (tranIdx in response.trans[pos]) {
+                            if (tranIdx != 0) {
+                                patTable += '/'
+                            } else {
+                                patTable += '<br>'
+                            }
+                            patTable += response.trans[pos][tranIdx]
+                        }
+                        patTable += '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>';
                         for (patIndex in response.patterns[pos]) {
                             var patPercent = response.patterns[pos][patIndex]
                             var patPair = response.patterns[pos][patIndex].split("%")
@@ -374,7 +366,7 @@
             xmlhttp.open('POST', '/ajax')
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
             //alert(evt.target.parentElement.parentElement.getAttribute("data-word"))
-            var postVars = 'word=' + evt.target.parentElement.getAttribute("data-word") + '&pos=' + evt.target.parentElement.getAttribute("data-pos")
+            var postVars = 'word=' + evt.target.getAttribute("data-word") + '&pos=' + evt.target.getAttribute("data-pos")
             //var postVars = 'word='+evt.target.firstChild.nodeValue+'&pos=V'
 
             xmlhttp.send(postVars);
@@ -393,7 +385,16 @@
                         for (let pos of ['V', 'N', 'ADJ']) {
                             if (pos in response.table === false) continue
                             
-                            patTable += '<h2>' + word + '<span data-pos="' + pos +'"></span></h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>'
+                            patTable += '<h2>' + word + '<span data-pos="' + pos +'"></span>'
+                        for (tranIdx in response.trans[pos]) {
+                            if (tranIdx != 0) {
+                                patTable += '/'
+                            } else {
+                                patTable += '<br>'
+                            }
+                            patTable += response.trans[pos][tranIdx]
+                        }
+                            patTable += '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>'
                             for (patIndex in response.patterns[pos]) {
                                 var patPercent = response.patterns[pos][patIndex]
                                 var patPair = response.patterns[pos][patIndex].split("%")

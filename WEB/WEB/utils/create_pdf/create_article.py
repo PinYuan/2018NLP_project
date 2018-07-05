@@ -14,7 +14,6 @@ from reportlab.lib.colors import (
 import re
 from utils.lemmatization import lemmatization
 from collections import defaultdict, Counter
-import re
 from nltk.corpus import wordnet # To get words in dictionary with their parts of speech
 from nltk.stem import WordNetLemmatizer # lemmatizes word based on it's parts of speech
 from utils.senttag import parse_sent
@@ -62,13 +61,22 @@ def get_level_set():
     for word in words:
         C_word.add(word)
     f.close()
-
+    
 def create_article(title, user_level, content, stylesheet, filename, verb, noun, adj):
     get_level_set()
     level_set = set()
-    if user_level == 'A': level_set = A_word
-    elif user_level == 'B': level_set = B_word
-    else: level_set = C_word
+    _level_set = set()
+    if user_level == 'A': 
+        level_set = A_word
+        _level_set = B_word | C_word
+    elif user_level == 'B': 
+        level_set = B_word
+        _level_set = A_word | C_word
+    else:
+        level_set = C_word
+        _level_set = A_word | B_word
+        
+    #file = open('_all.txt', 'w')
     
     doc = SimpleDocTemplate(filename, pagesize=letter)
     parts = []
@@ -95,9 +103,11 @@ def create_article(title, user_level, content, stylesheet, filename, verb, noun,
                 pos_num = 0
                 word_set = set()
                 for word in words:
+                    no_underline = 0
                     lemma_word = lemma_words[pos_num]
-                    if lemma_word in word_set or lemma_word not in level_set:
+                    if lemma_word in word_set:
                         pos_num += 1
+                        #no_underline = 1
                         continue
                     word_set.add(lemma_word)
                     pos = pos_parse[pos_num]
@@ -110,24 +120,37 @@ def create_article(title, user_level, content, stylesheet, filename, verb, noun,
                     if pos.startswith('VB') and lemma_word in verb: pos_tag = 'V'
                     elif pos.startswith('NN') and lemma_word in noun: pos_tag = 'N'
                     elif pos.startswith('J') and lemma_word in adj: pos_tag = 'ADJ'
-                        
+                    if lemma_word not in level_set:
+                        if user_level != 'C' or lemma_word in _level_set:
+                            #pos_num += 1
+                            no_underline = 1
+                            #continue
+                    
+                    if lemma_word == 'quit': print(pos, pos_tag, no_underline, lemma_word not in word_list, sent)
                     if pos_tag:
                         if lemma_word not in word_list:
+                            #file.write(lemma_word + '\t' + pos_tag + '\n')
                             word_list.add(lemma_word)
                             bf_tag = ""
                             bb_tag = ""
                         else:
-                            pos_num += 1
-                            continue
+                            no_underline = 1
+                            bf_tag = ""
+                            bb_tag = ""
+                            #pos_num += 1
+                            #continue
                         r = re.findall('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
                         for f, b in r:
-                            if f != r[0][0]:
-                                continue
-                            sent = sent.replace(f+clean_word+b, f+'<span data-word="'+lemma_word+'" data-pos="'+pos_tag+'"><u>'+bf_tag+clean_word+bb_tag+'</u></span>'+b)
-                            _sent = _sent.replace(f+clean_word+b, f+'<span><u>'+bf_tag+clean_word+bb_tag+'</u></span>'+b)
+                            if f != r[0][0] or no_underline:
+                                if lemma_word == 'quit': print( f, r[0][0],'f != r[0][0] or no_underline')
+                                sent = sent.replace(f+clean_word+b, f+'<span data-word="'+lemma_word+'" data-pos="'+pos_tag+'">'+bf_tag+clean_word+bb_tag+'</span>'+b)
+                                #continue
+                            else: 
+                                sent = sent.replace(f+clean_word+b, f+'<u><span data-word="'+lemma_word+'" data-pos="'+pos_tag+'">'+bf_tag+clean_word+bb_tag+'</span></u>'+b)
+                                _sent = _sent.replace(f+clean_word+b, f+'<span><u>'+bf_tag+clean_word+bb_tag+'</u></span>'+b)
                         if not r: # About ...
                             r = re.match(clean_word, sent)
-                            sent = sent.replace(clean_word, '<span data-word="'+lemma_word+'" data-pos="'+pos_tag+'"><u>'+bf_tag+clean_word+bb_tag+'</u></span>')
+                            sent = sent.replace(clean_word, '<u><span data-word="'+lemma_word+'" data-pos="'+pos_tag+'">'+bf_tag+clean_word+bb_tag+'</span></u>')
                             _sent = _sent.replace(clean_word, '<span><u>'+bf_tag+clean_word+bb_tag+'</u></span>')
                     pos_num += 1
                 new_para += sent+' '
@@ -145,4 +168,5 @@ def create_article(title, user_level, content, stylesheet, filename, verb, noun,
             new_content.append(['h3', text])
         
     doc.build(parts)
+    #file.close()
     return new_content

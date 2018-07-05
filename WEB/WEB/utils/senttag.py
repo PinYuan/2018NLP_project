@@ -44,7 +44,7 @@ def IHO_to_phrases(line):
             chunks[iy] = 'H-VB'                             
         elif lemmas[iy] == 'to' and chunks[iy] == 'I-VP':   # to of to-inf
             chunks[iy] = 'H-TO'; tags[iy] = 'TO'
-        elif chunks[iy][0] in ['H','O']: # or tags[iy] in ['TO'] or tags[iy+1] in ['WDT']:
+        elif chunks[iy] and chunks[iy][0] in ['H','O']: # or tags[iy] in ['TO'] or tags[iy+1] in ['WDT']:
             pass
         else:
             continue
