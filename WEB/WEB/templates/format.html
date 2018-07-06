@@ -178,6 +178,20 @@
             transform: translateY(20%);
             margin-left: 20px;
         }
+        /* 右側的nav-tabs */
+        .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+            color: #2196F3;
+            /*font-weight: bold;*/
+            cursor: default;
+            background-color: #fff;
+            border: 1px solid #77DDFF;
+            border-bottom-color: transparent;
+        }
+        .nav-tabs > li > a {
+            color: #000;
+            background-color: #fff;
+            border: 1px solid #DDD;
+        }
     </style>
 </head>
 
@@ -272,17 +286,43 @@
                 </div-->
             </form>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="patTable">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>pattern</th>
-                        <th style="text-align: center;">percent</th>
-                        <th>col.</th>
-                        <th>example</th>
-                    </tr>
-                </thead>
-            </table>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 15px;">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#pattern">Pattern</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#phrase">Phrase</a>
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div id="pattern" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane active" id="patTable"><br>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>pattern</th>
+                                <th style="text-align: center;">percent</th>
+                                <th>col.</th>
+                                <th>example</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div id="phrase" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane fade" id="phraseTable"><br>
+                  <table class="table">
+                        <thead>
+                            <tr>
+                                <th>pattern</th>
+                                <th style="text-align: center;">percent</th>
+                                <th>col.</th>
+                                <th>example</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     <script>
