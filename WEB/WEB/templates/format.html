@@ -290,34 +290,32 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#pattern">Pattern</a>
+                    <a class="nav-link" data-toggle="tab" href="#patTable">Pattern</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#phrase">Phrase</a>
+                    <a class="nav-link" data-toggle="tab" href="#phrTable">Phrase</a>
                 </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-                <div id="pattern" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane active" id="patTable"><br>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane active" id="patTable"><br>
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>pattern</th>
                                 <th style="text-align: center;">percent</th>
                                 <th>col.</th>
-                                <th>example</th>
                             </tr>
                         </thead>
                     </table>
                 </div>
-                <div id="phrase" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane fade" id="phraseTable"><br>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane" id="phrTable"><br>
                   <table class="table">
                         <thead>
                             <tr>
                                 <th>pattern</th>
                                 <th style="text-align: center;">percent</th>
                                 <th>col.</th>
-                                <th>example</th>
                             </tr>
                         </thead>
                     </table>
@@ -352,7 +350,29 @@
             });               
        });
         var test = document.getElementById('text-article');
+        
+        function genTable(word, patterns) {
+            var table = '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody>'
+            for ( patIndex in patterns ) {
+                var tuple = patterns[patIndex]
+                var pat, percent, colls, en, ch, source
+                pat = tuple[0].split("%")[0]
+                percent = tuple[0].split("%")[1]
+                colls = tuple[1]
+                en = tuple[2][0]
+                ch = tuple[2][1]
+                source = tuple[2][2]
 
+                table += "<tr><td>" + pat + "</td><td>" + percent + "%</td><td>" + colls + "</td></tr>" 
+                if (en != "") table += "<tr><td colspan=3>" + en
+                if (ch != "") table += "<br>" + ch
+                if (source == "cam") table += "<a href='" + "https://dictionary.cambridge.org/zht/詞典/英語-漢語-繁體/" + word.toLowerCase() + "'> <span class='glyphicon glyphicon-book'></span></a>"
+                table += "</tr>"
+            }
+            table += "</tbody></table>"
+            return table
+        }
+        
         function whatClicked(evt) {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
@@ -362,6 +382,7 @@
                     if (word != null) {
                         var pos = evt.target.getAttribute("data-pos")
                         var patTable = '<h2>' + word + '<span data-pos="' + pos + '"></span>'
+                        /* 翻譯 */
                         for (tranIdx in response.trans[pos]) {
                             if (tranIdx != 0) {
                                 patTable += '/'
@@ -370,8 +391,24 @@
                             }
                             patTable += response.trans[pos][tranIdx]
                         }
-                        patTable += '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>';
-                        for (patIndex in response.patterns[pos]) {
+                        
+                        patTable += genTable(word.toLowerCase(), response.patternTable[pos])
+                        document.getElementById("patTable").innerHTML = patTable;
+                        
+                        var phrTable = ''
+                        if ( response.phraseOrder.length > 0 ) {
+                            for ( phraseIndex in response.phraseOrder ) {
+                                var phrase = response.phraseOrder[phraseIndex]
+                                phrTable += '<h2>' + phrase.split('%')[0] /*+ '<span data-pos="' + pos + '"></span>'*/
+                                phrTable += genTable(word.toLowerCase(), response.phraseTable[pos][phrase])
+                            }
+                            document.getElementById("phrTable").innerHTML = phrTable;
+                        } else {
+                            phrTable += '<table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
+                            document.getElementById("phrTable").innerHTML = phrTable;
+                        }
+                       
+                        /*for (patIndex in response.patterns[pos]) {
                             var patPercent = response.patterns[pos][patIndex]
                             var patPair = response.patterns[pos][patIndex].split("%")
                             var pat = patPair[0]
@@ -399,7 +436,7 @@
                             }
                         }
                         patTable += "</tbody></table>"
-                        document.getElementById("patTable").innerHTML = patTable;
+                        document.getElementById("patTable").innerHTML = patTable;*/
                     }
                 }
             };
