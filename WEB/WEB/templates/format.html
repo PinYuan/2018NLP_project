@@ -16,7 +16,6 @@
         body {
             font-family: "Verdana", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             font-size: 16px;
-            scroll-behavior: smooth;
         }
         section {
             width: 100%;
@@ -24,9 +23,6 @@
         p {
             font-size: 18px;
             margin: 30px 0;
-        }
-        .html {
-            scroll-behavior: smooth;
         }
         .date {
             color: gray;
@@ -55,18 +51,10 @@
         tr:first-child th:first-child{
             border-top-left-radius: 10px;
         }
-        /*第一欄最後列：左下
-        tr:last-child td:first-child{
-            border-bottom-left-radius: 10px;
-        }*/
         /*最後欄第一列：右上*/
         tr:first-child th:last-child{
             border-top-right-radius: 10px;
         }
-        /*最後欄第一列：右下
-        tr:last-child td:last-child{
-            border-bottom-right-radius: 10px;
-        }*/
         .table-example {
             border-top: 1px solid #f2f2f2;
         }
@@ -82,12 +70,15 @@
         .table-pat {
             color: #df5647;
         }
-        ::-webkit-scrollbar {
-            display: none;
-        }
-        #totop {
-            display: none;
-            /* Hidden by default */
+        #functionbtn {
+            display:block;
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            border: 1px solid orange;
+            background: orange;
+            font-size: 20px;
+            color: white;
             position: fixed;
             /* Fixed/sticky position */
             bottom: 20px;
@@ -96,25 +87,46 @@
             /* Place the button 30px from the right */
             z-index: 99;
             /* Make sure it does not overlap */
-            border: none;
-            /* Remove borders */
-            outline: none;
-            /* Remove outline */
-            background-color: rgba(108, 122, 224, 0.5);
-            /* 半透明 */
-            /* Set a background color */
-            color: black;
-            /* Text color */
-            cursor: pointer;
-            /* Add a mouse pointer on hover */
-            padding: 15px;
-            /* Some padding */
-            border-radius: 10px;
-            /* Rounded corners */
         }
-        #totop:hover {
-            background-color: rgba(108, 122, 224, 0.8);
-            /* 半透明 */
+        .subbtn, [data-check="true"]{
+            display:block;
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            border: 1px solid orange;
+            background: orange;
+            font-size: 14px;
+            color: white;
+            margin-bottom:5px;
+        }
+        #toTop {
+            border: 1px solid skyblue;
+            background: skyblue;
+        }
+        #level1item1>[data-check="false"]{
+            display:block;
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            border: 1px solid grey;
+            background: grey;
+            font-size: 14px;
+            color: white;
+            margin-bottom:5px;
+        }
+        #level1item1{
+            position: fixed;
+            /* Fixed/sticky position */
+            bottom: 80px;
+            /* Place the button at the bottom of the page */
+            right: 51%;
+            /* Place the button 30px from the right */
+            z-index: 99;
+            /* Make sure it does not overlap */
+            margin-right: 5px;
+        }
+        ::-webkit-scrollbar {
+            display: none;
         }
         #rightDiv {
             position: fixed;
@@ -195,7 +207,7 @@
     </style>
 </head>
 
-<body>
+<body onload="labelWord('{{user_level}}')">
     <nav class="navbar navbar-default navbar-fixed-top">
         <div>
             <div class="navbar-header">
@@ -216,6 +228,7 @@
     </nav>
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
         <div class="leftDiv">
+            <div class="scrollbar"></div>
             <form action="/" method="post">
                 <button type="submit" class="btn btn-default">Return</button>
             </form>
@@ -249,12 +262,15 @@
             <form action="/" method="post">
                 <button type="submit" class="btn btn-default">Return</button>
             </form>
-        </div>
 
-        <div>
-            <button onclick="topFunction()" id="totop" title="Go to top" type="button" class="btn btn-default btn-sm">
-                <span class="glyphicon glyphicon-chevron-up"></span> TOP
-            </button>
+            <div id="level1item1" style="display: none;">
+                <button onclick="topFunction()" id="toTop" title="Go to top" class="subbtn">TOP</button>
+                <button onclick="labelWord('A')" id="wordLevelA" class="subbtn" data-check="false">A</button>
+                <button onclick="labelWord('B')" id="wordLevelB" class="subbtn" data-check="false">B</button>
+                <button onclick="labelWord('C')" id="wordLevelC" class="subbtn" data-check="false">C</button>
+            </div>
+            <button id="functionbtn" onclick="showHide(1);">+</button>
+            
         </div>
     </div>
 
@@ -325,18 +341,60 @@
     </div>
     <script>
         // When the user scrolls down 20px from the top of the document, show the button
+        /*
         window.onscroll = function() {
             scrollFunction()
         };
-
         function scrollFunction() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                document.getElementById("totop").style.display = "block";
+            if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
+                document.getElementById("functionbtn").style.display = "block";
             } else {
-                document.getElementById("totop").style.display = "none";
+                document.getElementById("functionbtn").style.display = "none";
+                document.getElementById("level1item1").style.display = "none";
             }
         }
-
+        */
+        function labelWord(obj) {
+            console.log(document.getElementById("wordLevelA").checked);
+            
+            if (document.getElementById("wordLevel"+obj).getAttribute('data-check') == "true") {
+                document.getElementById("wordLevel"+obj).setAttribute('data-check', "false");
+            }else {
+                document.getElementById("wordLevel"+obj).setAttribute('data-check', "true");
+            }
+            var items = document.querySelectorAll("[data-level='A']");
+            for (var i = 0; i < items.length; i++) {
+                if (document.getElementById("wordLevelA").getAttribute('data-check') == "true"){
+                    items[i].style.textDecoration = 'underline';
+                }else{
+                    items[i].style.textDecoration = 'none currentcolor solid';
+                }
+            }
+            items = document.querySelectorAll("[data-level='B']");
+            for (var i = 0; i < items.length; i++) {
+                if (document.getElementById("wordLevelB").getAttribute('data-check') == "true"){
+                    items[i].style.textDecoration = 'underline';
+                }else{
+                    items[i].style.textDecoration = 'none currentcolor solid';
+                }
+            }
+            items = document.querySelectorAll("[data-level='C']");
+            for (var i = 0; i < items.length; i++) {
+                if (document.getElementById("wordLevelC").getAttribute('data-check') == "true"){
+                    items[i].style.textDecoration = 'underline';
+                }else{
+                    items[i].style.textDecoration = 'none currentcolor solid';
+                }
+            }
+        }
+        function showHide(obj) {
+            if(document.getElementById('level1item'+obj).style.display == 'none'){
+              document.getElementById('level1item'+obj).style.display = 'block';
+            }else{
+              document.getElementById('level1item'+obj).style.display = 'none';
+            }
+            return false;
+        }
         // When the user clicks on the button, scroll to the top of the document
         function topFunction() {
             document.body.scrollTop = 0;
@@ -354,8 +412,8 @@
         function genTable(word, patterns) {
             var table = '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody>'
             for ( patIndex in patterns ) {
-                var tuple = patterns[patIndex]
-                var pat, percent, colls, en, ch, source
+                var tuple = patterns[patIndex];
+                var pat, percent, colls, en, ch, source;
                 pat = tuple[0].split("%")[0]
                 percent = tuple[0].split("%")[1]
                 colls = tuple[1]
