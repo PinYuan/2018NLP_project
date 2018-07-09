@@ -409,6 +409,15 @@
        });
         var test = document.getElementById('text-article');
         
+        function genTrans(trans) {
+            var translate = ''
+            for (tranIdx in trans) {
+                translate += (tranIdx != 0) ? '/' : '<br>'
+                translate += trans[tranIdx]
+            }
+            return translate
+        }
+        
         function genTable(word, patterns) {
             var table = '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody>'
             for ( patIndex in patterns ) {
@@ -439,20 +448,13 @@
                     var word = evt.target.getAttribute("data-word").toUpperCase();
                     if (word != null) {
                         var pos = evt.target.getAttribute("data-pos")
+                        // patttern
                         var patTable = '<h2>' + word + '<span data-pos="' + pos + '"></span>'
-                        /* 翻譯 */
-                        for (tranIdx in response.trans[pos]) {
-                            if (tranIdx != 0) {
-                                patTable += '/'
-                            } else {
-                                patTable += '<br>'
-                            }
-                            patTable += response.trans[pos][tranIdx]
-                        }
-                        
+                        patTable += genTrans(response.trans[pos])
                         patTable += genTable(word.toLowerCase(), response.patternTable[pos])
                         document.getElementById("patTable").innerHTML = patTable;
                         
+                        // phrase
                         var phrTable = ''
                         if ( response.phraseOrder.length > 0 ) {
                             for ( phraseIndex in response.phraseOrder ) {
@@ -465,36 +467,6 @@
                             phrTable += '<table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
                             document.getElementById("phrTable").innerHTML = phrTable;
                         }
-                       
-                        /*for (patIndex in response.patterns[pos]) {
-                            var patPercent = response.patterns[pos][patIndex]
-                            var patPair = response.patterns[pos][patIndex].split("%")
-                            var pat = patPair[0]
-                            var percent = patPair[1]
-                            var rowNumber = 0;
-                            for (objIndex in response.objs[pos][patPercent]) {
-                                rowNumber += 1;
-                            }
-                            patTable += "<tr><td class='table-pat' rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>" + percent + "%</td>"
-                            for (objIndex in response.objs[pos][patPercent]) {
-                                if (objIndex == 0) {
-                                    var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
-                                    patTable += "<td>" + obj + "</td>"
-                                    obj = response.objs[pos][patPercent][objIndex]
-                                    patTable += "<td>" + response.table[pos][patPercent][obj] + "</td>"
-                                    patTable += "</tr>"
-                                } else {
-                                    patTable += "<tr>"
-                                    var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
-                                    patTable += "<td class='table-example'>" + obj + "</td>"
-                                    obj = response.objs[pos][patPercent][objIndex]
-                                    patTable += "<td class='table-example'>" + response.table[pos][patPercent][obj] + "</td>"
-                                    patTable += "</tr>"
-                                }
-                            }
-                        }
-                        patTable += "</tbody></table>"
-                        document.getElementById("patTable").innerHTML = patTable;*/
                     }
                 }
             };
@@ -516,53 +488,33 @@
                     var response = JSON.parse(xmlhttp.responseText)
                     var word = document.getElementById("search_word").value.split(' ')[0].toUpperCase();
                     var patTable = ''
+                    var phrTable = ''
                     if (word != null) {
+                        // pattern
                         for (let pos of ['V', 'N', 'ADJ']) {
-                            if (pos in response.table === false) continue
+                            if (pos in response.patternTable === false) continue
                             
                             patTable += '<h2>' + word + '<span data-pos="' + pos +'"></span>'
-                        for (tranIdx in response.trans[pos]) {
-                            if (tranIdx != 0) {
-                                patTable += '/'
-                            } else {
-                                patTable += '<br>'
-                            }
-                            patTable += response.trans[pos][tranIdx]
-                        }
-                            patTable += '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody>'
-                            for (patIndex in response.patterns[pos]) {
-                                var patPercent = response.patterns[pos][patIndex]
-                                var patPair = response.patterns[pos][patIndex].split("%")
-                                var pat = patPair[0]
-                                var percent = patPair[1]
-                                var rowNumber = 0;
-                                for (objIndex in response.objs[pos][patPercent]) {
-                                    rowNumber += 1;
-                                }
-                                patTable += "<tr><td class='table-pat' rowspan='" + rowNumber + "'>" + pat + "</td><td rowspan='" + rowNumber + "' style='text-align: center;'>" + percent + "%</td>"
-                                for (objIndex in response.objs[pos][patPercent]) {
-                                    if (objIndex == 0) {
-                                        var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
-                                        patTable += "<td>" + obj + "</td>"
-                                        obj = response.objs[pos][patPercent][objIndex]
-                                        patTable += "<td>" + response.table[pos][patPercent][obj] + "</td>"
-                                        patTable += "</tr>"
-                                    } else {
-                                        patTable += "<tr>"
-                                        var obj = response.objs[pos][patPercent][objIndex].split("%")[0]
-                                        patTable += "<td class='table-example'>" + obj + "</td>"
-                                        obj = response.objs[pos][patPercent][objIndex]
-                                        patTable += "<td class='table-example'>" + response.table[pos][patPercent][obj] + "</td>"
-                                        patTable += "</tr>"
-                                    }
-                                }
-                            }
-                            patTable += "</tbody></table>"
+                            patTable += genTrans(response.trans[pos])
+                            patTable += genTable(word.toLowerCase(), response.patternTable[pos])
                         }
                         if (patTable == '') {
                             patTable += '<h2>' + word + '</h2><h3>Not found</h3><table class="table"><thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody></tbody></table>'
                         }
                         document.getElementById("patTable").innerHTML = patTable;
+                        
+                        // phrase
+                        if ( response.phraseOrder.length > 0 ) {
+                            for ( phraseIndex in response.phraseOrder ) {
+                                var phrase = response.phraseOrder[phraseIndex]
+                                phrTable += '<h2>' + phrase.split('%')[0] /*+ '<span data-pos="' + pos + '"></span>'*/
+                                phrTable += genTable(word.toLowerCase(), response.phraseTable['V'][phrase])
+                            }
+                            document.getElementById("phrTable").innerHTML = phrTable;
+                        } else {
+                            phrTable += '<table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
+                            document.getElementById("phrTable").innerHTML = phrTable;
+                        }
                     }
                 }
             };
