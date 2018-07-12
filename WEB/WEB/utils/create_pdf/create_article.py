@@ -12,7 +12,6 @@ from reportlab.lib.colors import (
 )
 
 import re
-from utils.lemmatization import lemmatization
 from collections import defaultdict, Counter
 from nltk.corpus import wordnet # To get words in dictionary with their parts of speech
 from nltk.stem import WordNetLemmatizer # lemmatizes word based on it's parts of speech

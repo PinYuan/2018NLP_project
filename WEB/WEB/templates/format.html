@@ -32,7 +32,7 @@
             margin: 70px 5% 5% 5%;
         }
         .table>tbody>tr>td {
-            border-top: 2px solid #f2f2f2;
+            border-top: 2px solid #fafafa;
         }
         .table {
             margin-top: 20px;
@@ -55,9 +55,6 @@
         tr:first-child th:last-child{
             border-top-right-radius: 10px;
         }
-        .table-example {
-            border-top: 1px solid #f2f2f2;
-        }
         .form-item {
             display: flex;
             align-items: center;
@@ -69,6 +66,15 @@
         }
         .table-pat {
             color: #df5647;
+        }
+        .table>thead>tr>th {
+            border-bottom: 0;
+        }
+        .table tr>td:last-child, .table tr>th:last-child {
+            padding-right: 30px;
+        }
+        .table tr>td:first-child, .table tr>th:first-child {
+            padding-left: 30px;
         }
         #functionbtn {
             display:block;
@@ -99,9 +105,16 @@
             color: white;
             margin-bottom:5px;
         }
+        .tab-content>.active {
+            background: white;
+            margin-bottom: 50px;
+        }
+        .nav-tabs {
+            border-bottom: 0;
+        }
         #toTop {
-            border: 1px solid skyblue;
-            background: skyblue;
+            border: 1px solid #6c7ae0;
+            background: #6c7ae0;
         }
         #level1item1>[data-check="false"]{
             display:block;
@@ -155,6 +168,9 @@
             font-weight: bold;
             text-align: center;
         }
+        #phrTable>h2 {
+            font-weight: bold;
+        }
         #patTable>h2>[data-pos="V"] {
             color: #E72F17;
             /* red */
@@ -202,7 +218,6 @@
         .nav-tabs > li > a {
             color: #000;
             background-color: #fff;
-            border: 1px solid #DDD;
         }
     </style>
 </head>
@@ -281,31 +296,12 @@
                     <input class="form-control" type="text" id="search_word" name="word" autocomplete="off" placeholder="Type/Click a word  ex.make / make v n">
                     <button onclick="search()" class="btn btn-default btn-lg" type="button"><span class="glyphicon glyphicon-search"></span></button>
                 </div>
-                <!--div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-item">
-                    <label class="checkbox">Verb
-                        <input type="checkbox" checked="checked" id="check_V">
-                        <span class="checkmark"></span>
-                    </label>
-                    <label class="checkbox">Noun
-                        <input type="checkbox" checked="checked" id="check_N">
-                        <span class="checkmark"></span>
-                    </label>
-                    <label class="checkbox">Adj.
-                        <input type="checkbox" checked="checked" id="check_ADJ">
-                        <span class="checkmark"></span>
-                    </label>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-item">
-                    <button onclick="search()" title="search" type="button" class="btn btn-default">
-                        Search
-                    </button>
-                </div-->
             </form>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 15px;">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" data-toggle="tab" href="#patTable">Pattern</a>
                 </li>
                 <li class="nav-item">
@@ -315,7 +311,7 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane active" id="patTable"><br>
-                    <table class="table">
+                    <table class="table" style="display:none;">
                         <thead>
                             <tr>
                                 <th>pattern</th>
@@ -326,7 +322,7 @@
                     </table>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 container tab-pane" id="phrTable"><br>
-                  <table class="table">
+                  <table class="table" style="display:none;">
                         <thead>
                             <tr>
                                 <th>pattern</th>
@@ -354,36 +350,24 @@
             }
         }
         */
-        function labelWord(obj) {
-            console.log(document.getElementById("wordLevelA").checked);
-            
+        function labelWord(obj) {            
             if (document.getElementById("wordLevel"+obj).getAttribute('data-check') == "true") {
                 document.getElementById("wordLevel"+obj).setAttribute('data-check', "false");
             }else {
                 document.getElementById("wordLevel"+obj).setAttribute('data-check', "true");
             }
-            var items = document.querySelectorAll("[data-level='A']");
-            for (var i = 0; i < items.length; i++) {
-                if (document.getElementById("wordLevelA").getAttribute('data-check') == "true"){
-                    items[i].style.textDecoration = 'underline';
-                }else{
-                    items[i].style.textDecoration = 'none currentcolor solid';
-                }
-            }
-            items = document.querySelectorAll("[data-level='B']");
-            for (var i = 0; i < items.length; i++) {
-                if (document.getElementById("wordLevelB").getAttribute('data-check') == "true"){
-                    items[i].style.textDecoration = 'underline';
-                }else{
-                    items[i].style.textDecoration = 'none currentcolor solid';
-                }
-            }
-            items = document.querySelectorAll("[data-level='C']");
-            for (var i = 0; i < items.length; i++) {
-                if (document.getElementById("wordLevelC").getAttribute('data-check') == "true"){
-                    items[i].style.textDecoration = 'underline';
-                }else{
-                    items[i].style.textDecoration = 'none currentcolor solid';
+            
+            var levels = ["A", "B", "C"];
+            var items;
+            
+            for (var j in levels) {
+                items = document.querySelectorAll("[data-level='"+levels[j]+"']");
+                for (var i = 0; i < items.length; i++) {
+                    if (document.getElementById("wordLevel"+levels[j]).getAttribute('data-check') == "true"){
+                        items[i].style.textDecoration = 'underline';
+                    }else{
+                        items[i].style.textDecoration = 'none currentcolor solid';
+                    }
                 }
             }
         }
@@ -430,13 +414,16 @@
                 ch = tuple[2][1]
                 source = tuple[2][2]
 
-                table += "<tr><td>" + pat + "</td><td>" + percent + "%</td><td>" + colls + "</td></tr>" 
-                if (en != "") table += "<tr><td colspan=3>" + en
+                table += '<tr><td style="color: indianred;">' + pat + '</td><td style="text-align: center;">' + percent + "%</td><td>" + colls + "</td></tr>" 
+                if (en != "") table += '<tr><td style="background: #fafafa; " colspan=3>' + en
                 if (ch != "") table += "<br>" + ch
                 if (source == "cam") table += "<a href='" + "https://dictionary.cambridge.org/zht/詞典/英語-漢語-繁體/" + word.toLowerCase() + "'> <span class='glyphicon glyphicon-book'></span></a>"
                 table += "</tr>"
             }
             table += "</tbody></table>"
+            if (!patterns || !word){
+                table = '</h2><table class="table" style="display:none;"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
+            }
             return table
         }
         
@@ -450,7 +437,7 @@
                         var pos = evt.target.getAttribute("data-pos")
                         // patttern
                         var patTable = '<h2>' + word + '<span data-pos="' + pos + '"></span>'
-                        patTable += genTrans(response.trans[pos])
+                        //patTable += genTrans(response.trans[pos])
                         patTable += genTable(word.toLowerCase(), response.patternTable[pos])
                         document.getElementById("patTable").innerHTML = patTable;
                         
@@ -464,7 +451,7 @@
                             }
                             document.getElementById("phrTable").innerHTML = phrTable;
                         } else {
-                            phrTable += '<table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
+                            phrTable += '<table class="table" style="display:none;"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
                             document.getElementById("phrTable").innerHTML = phrTable;
                         }
                     }

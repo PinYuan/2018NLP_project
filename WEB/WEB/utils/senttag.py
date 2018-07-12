@@ -10,16 +10,12 @@ from pprint import pprint
 tagger = geniatagger.GeniaTagger('utils/geniatagger-3.0.2/geniatagger')
 
 def parseV_to_H(info):
-    # B-NP B-VP B-NP I-NP O
     def bio_to_iho(BIO):
-        #print 'bio_to_iho', BIO
         res, oldPhrase = [], '***'
         for iToken, token in enumerate(BIO):
             phrase = token[(token.index('-')+1) if '-' in token else 0:]
             res = (['O'] if phrase=='O' else ['H-'+phrase if phrase != oldPhrase else 'I-'+phrase])+res
             oldPhrase = phrase
-            #print 'bio_to_iho', iToken, token, res[0]
-        #print 'bio_to_iho', res
         return res
 
     origin = list()
@@ -58,26 +54,10 @@ def IHO_to_phrases(line):
 def parse_sent(sent):
     sent = sent.replace(' — ', ' ')
     parse = tagger.parse(sent)
-    #print(parse)
     parse = parseV_to_H(parse)
-    #pprint(parse)
     parse = IHO_to_phrases(parse)
-    #pprint(parse)
+
     words, lemmas, tags, chunks = zip(*parse)
     return [words, lemmas, tags, chunks]
-    #return '\t'.join( [' '.join(words), ' '.join(lemmas), ' '.join(tags), ' '.join(chunks)] )
-    #return parseV_to_H(parse)
 
-# if __name__ == '__main__':
-#     line = 'They liked to discuss about the issues.'
-#     print (parse(line))
-    '''for line in sys.stdin:
-        # 01-2	[1 V]	<1 move>	Ex	As they <i>advanced</i>, the boys beamed their flashlights in every direction. 	隨著他們前進，男孩們在各個方向上手持手電筒。
-        try:
-            pageno, pattern, group, _, example, translation = line.strip().split('\t')
-            example = example.replace('<i>', '').replace('</i>', '')
-            print (parse(example))
-        except:
-            print ("***\t"+line.strip())
-        #break
-        #print(parse('This is a test.'))'''
+

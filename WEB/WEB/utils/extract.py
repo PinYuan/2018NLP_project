@@ -20,21 +20,6 @@ def getPublishDate(url):
             publishDate = search_result.group(1) + '-' + search_result.group(3) + '-' + search_result.group(5)
         return publishDate
 
-# def cut_word(text):
-#     text = text.replace(',', ' ,',)
-#     text = text.replace('\'s', ' \'s')
-#     text = text.replace('.', ' .')
-#     text = text.split()
-#     return text
-
-# def has_space(text): # s -> has space n -> no space
-#     space = []
-#     for word in text:
-#         if re.match(',|\.|\'s', word) != None:
-#             space.append('n')
-#         else:
-#             space.append('s')
-#     return space
 
 def remove_a(text):
     text = re.sub('(?is)<a.*?>', '', text)
@@ -53,10 +38,6 @@ def clean_content(content):
     content = re.sub('(?is)<a.*?>', '<a>', content)
     
     content = content[17:-20] # remove html, body, div 
-#    matches = re.findall('(?is)<div>.*?</div>', content)
-#     for match in matches:
-#         sub = '<p>' + re.sub('<div>|<p>|</div>|</p>', '', match) + '</p>'
-#         content = re.sub('(?is)<div>.*?</div>', sub, content, count=1) # because sometimes use match fail 
     content = re.sub('<p>', '[p]', content)
     content = re.sub('<h2>', '[h2]', content)
     content = re.sub('<h3>', '[h3]', content)
