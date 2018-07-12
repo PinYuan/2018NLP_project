@@ -482,7 +482,7 @@
                             if (pos in response.patternTable === false) continue
                             
                             patTable += '<h2>' + word + '<span data-pos="' + pos +'"></span>'
-                            patTable += genTrans(response.trans[pos])
+                            // patTable += genTrans(response.trans[pos])
                             patTable += genTable(word.toLowerCase(), response.patternTable[pos])
                         }
                         if (patTable == '') {
