@@ -17,9 +17,9 @@ def create_article(title, user_level, content, filename, verb, noun, adj):
             new_para = ''
             for sent in text:
                 parse = parse_sent(sent)
-                words = [y for x in parse[0] for y in x.split()]
-                lemma_words = [y for x in parse[1] for y in x.split()]
-                pos_parse = [y for x in parse[2] for y in x.split()]
+                words = [ x[0] for x in parse ]
+                lemma_words = [ x[1] for x in parse ]
+                pos_parse = [ x[2] for x in parse ]
                 pos_num = 0
                 word_set = set()
                 for word in words:
