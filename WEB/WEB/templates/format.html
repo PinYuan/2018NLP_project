@@ -32,7 +32,7 @@
             margin: 70px 5% 5% 5%;
         }
         .table>tbody>tr>td {
-            border-top: 2px solid #fafafa;
+            border-top: 2px solid #f2f2f2;
         }
         .table {
             margin-top: 20px;
@@ -106,6 +106,7 @@
             margin-bottom:5px;
         }
         .tab-content>.active {
+            height: 0;
             background: white;
             margin-bottom: 50px;
         }
@@ -415,9 +416,9 @@
                 source = tuple[2][2]
 
                 table += '<tr><td style="color: indianred;">' + pat + '</td><td style="text-align: center;">' + percent + "%</td><td>" + colls + "</td></tr>" 
-                if (en != "") table += '<tr><td style="background: #fafafa; " colspan=3>' + en
+                if (en != "") table += '<tr><td style="background: #f2f2f2; " colspan=3>' + en
                 if (ch != "") table += "<br>" + ch
-                if (source == "cam") table += "<a href='" + "https://dictionary.cambridge.org/zht/詞典/英語-漢語-繁體/" + word.toLowerCase() + "'> <span class='glyphicon glyphicon-book'></span></a>"
+                if (source == "cam") table += "<a href='https://dictionary.cambridge.org/zht/詞典/英語-漢語-繁體/" + word.toLowerCase() + "' target='blank_'> <span class='glyphicon glyphicon-book'></span></a>"
                 table += "</tr>"
             }
             table += "</tbody></table>"
@@ -440,6 +441,7 @@
                         //patTable += genTrans(response.trans[pos])
                         patTable += genTable(word.toLowerCase(), response.patternTable[pos])
                         document.getElementById("patTable").innerHTML = patTable;
+                        document.getElementById("patTable").style.height = "auto";
                         
                         // phrase
                         var phrTable = ''
@@ -450,6 +452,7 @@
                                 phrTable += genTable(word.toLowerCase(), response.phraseTable[pos][phrase])
                             }
                             document.getElementById("phrTable").innerHTML = phrTable;
+                        document.getElementById("phrTable").style.height = "auto";
                         } else {
                             phrTable += '<table class="table" style="display:none;"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
                             document.getElementById("phrTable").innerHTML = phrTable;
@@ -489,6 +492,7 @@
                             patTable += '<h2>' + word + '</h2><h3>Not found</h3><table class="table"><thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th><th>example</th> </tr></thead><tbody></tbody></table>'
                         }
                         document.getElementById("patTable").innerHTML = patTable;
+                        document.getElementById("patTable").style.height = "auto";
                         
                         // phrase
                         if ( response.phraseOrder.length > 0 ) {
@@ -498,6 +502,7 @@
                                 phrTable += genTable(word.toLowerCase(), response.phraseTable['V'][phrase])
                             }
                             document.getElementById("phrTable").innerHTML = phrTable;
+                            document.getElementById("phrTable").style.height = "auto";
                         } else {
                             phrTable += '<table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
                             document.getElementById("phrTable").innerHTML = phrTable;
