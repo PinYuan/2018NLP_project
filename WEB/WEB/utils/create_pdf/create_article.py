@@ -10,7 +10,7 @@ C_word = set(open(data_pwd + 'C_level_word.txt', 'r').readlines()[0].split())
     
 def create_article(title, user_level, content, filename, verb, noun, adj):
     new_content = []
-    word_list = set(['word', 'span', 'data', 'pos', 'u', 'datum']) # prevent replace loop
+    dangerous_word = set(['word', 'span', 'data', 'pos', 'datum', 'level']) # prevent replace loop
     for c in content:
         _type, text = c[0], c[1]
         if _type == 'p':
@@ -25,7 +25,7 @@ def create_article(title, user_level, content, filename, verb, noun, adj):
                 for word in words:
                     level = 'C'
                     lemma_word = lemma_words[pos_num]
-                    if lemma_word in word_set:
+                    if lemma_word in word_set | dangerous_word:
                         pos_num += 1
                         continue
                     word_set.add(lemma_word)
@@ -43,7 +43,6 @@ def create_article(title, user_level, content, filename, verb, noun, adj):
                     elif lemma_word in B_word: level = 'B'
                     
                     if pos_tag:
-                        word_list.add(lemma_word)
                         bf_tag = bb_tag = ""
                         r = re.findall('(?P<f>\W)'+clean_word+'(?P<b>\W)', sent) # cookies
                         for f, b in r:
