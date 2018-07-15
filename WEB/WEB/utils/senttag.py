@@ -1,5 +1,5 @@
 import spacy
-nlp = spacy.load('en_core_web_sm')
+nlp = spacy.load('en_core_web_sm', disable=['parser', 'entity'])
 def parse_sent(sent):
     parse = []
     doc = nlp(sent)
