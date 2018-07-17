@@ -7,8 +7,8 @@ data_pwd = './utils/data/levelWord/'
 A_word = set(open(data_pwd + 'A_level_word.txt', 'r').readlines()[0].split())
 B_word = set(open(data_pwd + 'B_level_word.txt', 'r').readlines()[0].split())
 C_word = set(open(data_pwd + 'C_level_word.txt', 'r').readlines()[0].split())
-    
-def create_article(title, user_level, content, filename, verb, noun, adj):
+
+def create_article(title, user_level, content, verb, noun, adj):
     new_content = []
     dangerous_word = set(['word', 'span', 'data', 'pos', 'datum', 'level']) # prevent replace loop
     for c in content:
@@ -55,5 +55,4 @@ def create_article(title, user_level, content, filename, verb, noun, adj):
             new_content.append(['p', new_para])
         elif _type == 'h2': new_content.append(['h2', text])
         elif _type == 'h3': new_content.append(['h3', text])
-
     return new_content

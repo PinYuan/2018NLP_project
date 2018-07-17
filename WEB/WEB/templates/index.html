@@ -1,204 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Word Learning</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-<style>
-body, html {
-    height: 100%;
-    margin: 0;
-    scroll-behavior: smooth;
-}
-.navbar {
-	margin-bottom: 0;
-}
-.bg {
-    /* The image used */
-    background-image: url("../static/img/welcome-bg.jpg");
+	<title>Word Learning</title>
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+	</script>
+	<script src="https://code.jquery.com/jquery-1.10.2.js">
+	</script>
+	<style>
+	body, html {
+	   height: 100%;
+	   margin: 0;
+	   scroll-behavior: smooth;
+	}
+	.navbar {
+	   margin-bottom: 0;
+	}
+	.bg {
+	   /* The image used */
+	   background-image: url("../static/img/welcome-bg.jpg");
 
-    /* Full height */
-    height: 100%; 
+	   /* Full height */
+	   height: 100%; 
 
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-#welcome .title {
-	padding-top: 15%;
-    color: white;
-}
-#welcome .container .title h1 {
-    font-size: 42px;
-    font-weight: 400;
-}
-#welcome .container .title p {
-    font-size: 29px;
-    font-weight: 300;
-}
-#welcome .anonym-form {
-    padding-top: 30px;
-    padding-bottom: 30px;
-}
-.navbar-default {
-  background-color: white !important;
-}
-.card-img-top {
-    width: 100%;
-    height: 25vw;
-    object-fit: cover;
-    border-radius: 5px 5px 0 0;
-}
-.card {
-    border: 1px gray solid;
-    border-radius: 5px;
-    padding: 0;
-    width:30%;
-    background: white;
-}
-.card-body {
-    padding: 0 10px;
-}
-.card-group {
-    display: flex;                  /* establish flex container */
-    flex-direction: row;            /* default value; can be omitted */
-    flex-wrap: nowrap;              /* default value; can be omitted */
-    justify-content: space-between;
-}
-#totop {
-    display: none; /* Hidden by default */
-    position: fixed; /* Fixed/sticky position */
-    bottom: 20px; /* Place the button at the bottom of the page */
-    right: 30px; /* Place the button 30px from the right */
-    z-index: 99; /* Make sure it does not overlap */
-    border: none; /* Remove borders */
-    outline: none; /* Remove outline */
-    background-color: grey; /* Set a background color */
-    color: white; /* Text color */
-    cursor: pointer; /* Add a mouse pointer on hover */
-    padding: 15px; /* Some padding */
-    border-radius: 10px; /* Rounded corners */
-}
-#about-us {
-    margin-top: 100px;
-}
-</style>
+	   /* Center and scale the image nicely */
+	   background-position: center;
+	   background-repeat: no-repeat;
+	   background-size: cover;
+	}
+	#welcome .title {
+	   /*padding-top: 15%;*/
+	   padding-top: 5%;
+	   color: white;
+	}
+	#welcome .container .title h1 {
+	   font-size: 42px;
+	   font-weight: 400;
+	}
+	#welcome .container .title p {
+	   font-size: 29px;
+	   font-weight: 300;
+	}
+	#welcome .anonym-form {
+	   padding-top: 30px;
+	   padding-bottom: 30px;
+	}
+	.navbar-default {
+	   background-color: white !important;
+	}
+	.card-img-top {
+	   width: 100%;
+	   height: 25vw;
+	   object-fit: cover;
+	   border-radius: 5px 5px 0 0;
+	}
+	.card {
+	   border: 1px gray solid;
+	   border-radius: 5px;
+	   padding: 0;
+	   width:30%;
+	   background: white;
+	}
+	.card-body {
+	   padding: 0 10px;
+	}
+	.card-group {
+	   display: flex;                  /* establish flex container */
+	   flex-direction: row;            /* default value; can be omitted */
+	   flex-wrap: nowrap;              /* default value; can be omitted */
+	   justify-content: space-between;
+	}
+	#totop {
+	   display: none; /* Hidden by default */
+	   position: fixed; /* Fixed/sticky position */
+	   bottom: 20px; /* Place the button at the bottom of the page */
+	   right: 30px; /* Place the button 30px from the right */
+	   z-index: 99; /* Make sure it does not overlap */
+	   border: none; /* Remove borders */
+	   outline: none; /* Remove outline */
+	   background-color: grey; /* Set a background color */
+	   color: white; /* Text color */
+	   cursor: pointer; /* Add a mouse pointer on hover */
+	   padding: 15px; /* Some padding */
+	   border-radius: 10px; /* Rounded corners */
+	}
+	#about-us {
+	   margin-top: 100px;
+	}
+	</style>
 </head>
 <body>
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<button class="navbar-toggle" data-target="#myNavbar" data-toggle="collapse" type="button"><span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="#">Ling Booster</a>
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+				<ul class="nav navbar-nav">
+					<li class="active">
+						<a href="#about-us">ABOUT US</a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a>
+					</li>
+					<li>
+						<a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="container-fluid bg" id="welcome">
+		<div class="container">
+			<div class="title">
+				<h1 class="text-center">Get Grammar List from (almost) any English news web pages.</h1>
+				<p class="text-center">Automatically in 10 sec.</p>
+			</div>
+			<div>
+				<div class="anonym-form">
+					<form action="/handle_data" class="form-horizontal" method="post">
+						<div class="form-group">
+							<div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">
+								<select class="form-control" name="user_level">
+									<option value="A">
+										LEVEL A
+									</option>
+									<option value="B">
+										LEVEL B
+									</option>
+									<option value="C">
+										LEVEL C
+									</option>
+								</select>
+							</div>
+							<div class="col-xs-11 col-sm-11 col-md-10 col-lg-10">
+								<input class="form-control" id="url" name="url" placeholder="Copy &amp; paste a URL of a web article" type="url">
+							</div>
+                            <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10" style="float: right;">
+                                <textarea name="text" rows="10" style="width: 100%; margin-top: 1%;"></textarea>
+							</div>
+                            
+						</div>
+						<div class="form-group text-center">
+							<div class="col-sm-offset-2 col-sm-10" style="margin: 0 auto; float: none; margin-top: 20px;">
+								<input class="btn btn-lg btn-danger" type="submit" value="Submit">
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container" id="about-us" style="height: 100%;">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<h1 class="text-center" style="margin: 60px 0; color: #617687;">About Us</h1>
+		</div>
+		<div class="card-group" style="width: 100%;">
+			<div class="card">
+				<img alt="Card image cap" class="card-img-top" src="../static/img/about-ljy.jpg">
+				<div class="card-body">
+					<h5 class="card-title">JIE-YU LUO</h5>
+					<h6 class="card-text">NTHU Department of Computer Science</h6>
+				</div>
+			</div>
+			<div class="card">
+				<img alt="Card image cap" class="card-img-top" src="../static/img/about-cpy.jpg">
+				<div class="card-body">
+					<h5 class="card-title">PIN-YUAN CHEN</h5>
+					<h6 class="card-text">NTHU Department of Computer Science</h6>
+				</div>
+			</div>
+			<div class="card">
+				<img alt="Card image cap" class="card-img-top" src="../static/img/about-hh.jpg">
+				<div class="card-body">
+					<h5 class="card-title">HAN HUANG</h5>
+					<h6 class="card-text">NTHU Department of Computer Science</h6>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div>
+		<button class="btn btn-default btn-sm" id="totop" onclick="topFunction()" title="Go to top" type="button"><span class="glyphicon glyphicon-chevron-up"></span> TOP</button>
+	</div>
+	<script>
+	// When the user scrolls down 20px from the top of the document, show the button
+	window.onscroll = function() {scrollFunction()};
 
-<nav class="navbar navbar-default">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
-      </button>
-      <a class="navbar-brand" href="#">Ling Booster</a>
-    </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#about-us">ABOUT US</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-    
-<div id="welcome" class="container-fluid bg">
-  <div class="container">
-    <div class="title">
-      <h1 class="text-center">Get Grammar List from (almost) any English news web pages.</h1>
-      <p class="text-center">Automatically in 20 sec.</p>
-    </div>
-    <div>
-      <div class="anonym-form">
-      	<form class="form-horizontal" action="/handle_data" method="post">
-          <div class="form-group">
-            <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2">
-              <select name="user_level" class="form-control">
-                <option value="A">LEVEL A</option>
-                <option value="B">LEVEL B</option>
-                <option value="C">LEVEL C</option>
-              </select>
-            </div>
+	function scrollFunction() {
+	   if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+	       document.getElementById("totop").style.display = "block";
+	   } else {
+	       document.getElementById("totop").style.display = "none";
+	   }
+	}
 
-            <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10">
-              <input class="form-control" type="url" id="url" name="url" placeholder="Copy &amp; paste a URL of a web article">
-            </div>
-          </div>
-          <div class="form-group text-center">
-            <div class="col-sm-offset-2 col-sm-10" style="margin: 0 auto; float: none; margin-top: 20px;">
-              <input value="Submit" class="btn btn-lg btn-danger" type="submit">
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-      
-<div id="about-us" class="container" style="height: 100%;">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><h1 class="text-center" style="margin: 60px 0; color: #617687;">About Us</h1></div>
-  <div class="card-group" style="width: 100%;">
-      <div class="card">
-        <img class="card-img-top" src="../static/img/about-ljy.jpg" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">JIE-YU LUO</h5>
-            <h6 class="card-text">NTHU Department of Computer Science</h6>
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="../static/img/about-cpy.jpg" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">PIN-YUAN CHEN</h5>
-            <h6 class="card-text">NTHU Department of Computer Science</h6>
-        </div>
-      </div>
-      <div class="card">
-        <img class="card-img-top" src="../static/img/about-hh.jpg" alt="Card image cap">
-        <div class="card-body">
-            <h5 class="card-title">HAN HUANG</h5>
-            <h6 class="card-text">NTHU Department of Computer Science</h6>
-        </div>
-      </div>
-    </div>
-</div>
-
-<div>
-    <button onclick="topFunction()" id="totop" title="Go to top" type="button" class="btn btn-default btn-sm">
-        <span class="glyphicon glyphicon-chevron-up"></span> TOP
-    </button>
-</div>
-
-    
-    
-<script>
-// When the user scrolls down 20px from the top of the document, show the button
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("totop").style.display = "block";
-    } else {
-        document.getElementById("totop").style.display = "none";
-    }
-}
-
-// When the user clicks on the button, scroll to the top of the document
-function topFunction() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-}
-</script>
+	// When the user clicks on the button, scroll to the top of the document
+	function topFunction() {
+	   document.body.scrollTop = 0;
+	   document.documentElement.scrollTop = 0;
+	}
+	</script>
 </body>
 </html>
-

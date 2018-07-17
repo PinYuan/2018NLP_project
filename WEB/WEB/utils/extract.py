@@ -26,36 +26,45 @@ def remove_a(text):
     text = re.sub('(?is)</a>', '', text)
     return text
     
-def clean_content(content):
+def clean_content(content, inputType):
     def sentence_tokenize(content):
         sent_text = nltk.sent_tokenize(content) 
         sent_text = [sent for sent in sent_text if '\n' not in sent]
         #sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', content)
         return sent_text
     
-    content = re.sub('(?is)<div.*?>', '<div>', content)
-    content = re.sub('(?is)<p.*?>', '<p>', content)
-    content = re.sub('(?is)<a.*?>', '<a>', content)
-    
-    content = content[17:-20] # remove html, body, div 
-    content = re.sub('<p>', '[p]', content)
-    content = re.sub('<h2>', '[h2]', content)
-    content = re.sub('<h3>', '[h3]', content)
-    content = re.sub('<.*?>', '', content)
+    if inputType == 'url':
+        content = re.sub('(?is)<div.*?>', '<div>', content)
+        content = re.sub('(?is)<p.*?>', '<p>', content)
+        content = re.sub('(?is)<a.*?>', '<a>', content)
 
-    content = re.split('\[p\]', content)
-    
-    new_content = []
-    for p in content[1:]:
-        p = p.strip()
-        if p.startswith('[h2]'):
-            p = p.replace('[h2]', '')
-            temp = ['h2', p]
-        elif p.startswith('[h3]'):
-            p = p.replace('[h3]', '')
-            temp = ['h3', p]
-        else:
-            temp = ['p', list(filter(None, sentence_tokenize(p)))]
-            
-        new_content.append(temp)
+        content = content[17:-20] # remove html, body, div 
+        content = re.sub('<p>', '[p]', content)
+        content = re.sub('<h2>', '[h2]', content)
+        content = re.sub('<h3>', '[h3]', content)
+        content = re.sub('<.*?>', '', content)
+
+        content = re.split('\[p\]', content)
+
+        new_content = []
+        for p in content[1:]:
+            p = p.strip()
+            if p.startswith('[h2]'):
+                p = p.replace('[h2]', '')
+                temp = ['h2', p]
+            elif p.startswith('[h3]'):
+                p = p.replace('[h3]', '')
+                temp = ['h3', p]
+            else:
+                temp = ['p', list(filter(None, sentence_tokenize(p)))]
+
+            new_content.append(temp)
+    else:
+        content = content.split('\n')
+        new_content = []
+        for p in content:
+            p = p.strip()
+            if p:
+                temp = ['p', [p]]
+            new_content.append(temp)
     return new_content
