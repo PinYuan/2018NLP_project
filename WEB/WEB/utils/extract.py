@@ -59,6 +59,20 @@ def clean_content(content, inputType):
                 temp = ['p', list(filter(None, sentence_tokenize(p)))]
 
             new_content.append(temp)
+    elif inputType == 'youtube':
+        v_id = content[0]
+        content = content[1].split('\n\n')
+        new_content = list()
+        for p in content:
+            if '-->' in p:
+                p = p.split(' --> ', 1)
+                time = p[0].strip().split(':')
+                time[-1] = time[-1].split('.')[0]
+                while len(time) < 3:
+                    time.insert(0, 0)
+                p[0] = '<a class="youtube-time" href="https://youtu.be/'+v_id+'?t='+time[-3]+'h'+time[-2]+'m'+time[-1]+'s" target="blank_">'+p[0].split('.', 1)[0]+'</a>'
+                p[1] = p[1].split('\n', 1)[1].replace('\n', ' ')
+                new_content.append(['p', p]) # .split('\n', 1)[-1].replace('\n', ' ')
     else:
         content = content.split('\n')
         new_content = []

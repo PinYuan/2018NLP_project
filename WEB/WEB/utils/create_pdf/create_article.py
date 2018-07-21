@@ -8,7 +8,7 @@ A_word = set(open(data_pwd + 'A_level_word.txt', 'r').readlines()[0].split())
 B_word = set(open(data_pwd + 'B_level_word.txt', 'r').readlines()[0].split())
 C_word = set(open(data_pwd + 'C_level_word.txt', 'r').readlines()[0].split())
 
-def create_article(title, user_level, content, verb, noun, adj):
+def create_article(title, user_level, content, youtube, verb, noun, adj):
     new_content = []
     dangerous_word = set(['word', 'span', 'data', 'pos', 'datum', 'level']) # prevent replace loop
     for c in content:
@@ -16,6 +16,9 @@ def create_article(title, user_level, content, verb, noun, adj):
         if _type == 'p':
             new_para = ''
             for sent in text:
+                if youtube and not text.index(sent):
+                    new_para += sent+' '
+                    continue
                 parse = parse_sent(sent)
                 words = [ x[0] for x in parse ]
                 lemma_words = [ x[1] for x in parse ]
