@@ -56,6 +56,6 @@ def create_article(title, user_level, content, youtube, verb, noun, adj):
                     pos_num += 1
                 new_para += sent+' '
             new_content.append(['p', new_para])
-        elif _type == 'h2': new_content.append(['h2', text])
-        elif _type == 'h3': new_content.append(['h3', text])
+        elif _type == 'h2': new_content.append(['h2', ' '.join(text)])
+        elif _type == 'h3': new_content.append(['h3', ' '.join(text)])
     return new_content

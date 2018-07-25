@@ -257,11 +257,16 @@
                             <a type="button" class="btn btn-primary" href="#" target="blank">Anki-word flash card</a>
                         </div>-->
                     <div id="text-article">
-                        {% for c in content %} {% set type = c[0] %} {% if type == 'p' %}
-                        <p>{{c[1]|safe}}</p>
-                        {% elif type == 'h2' %}
-                        <h2>{{text}}</h2> {% elif type == 'h3' %}
-                        <h3>{{text}}</h3> {% endif %} {% endfor %}
+                        {% for c in content %} 
+                            {% set type = c[0] %} 
+                            {% if type == 'p' %}
+                                <p>{{c[1]|safe}}</p>
+                            {% elif type == 'h2' %}
+                                <h2>{{c[1]|safe}}</h2> 
+                            {% elif type == 'h3' %}
+                                <h3>{{c[1]|safe}}</h3> 
+                            {% endif %} 
+                        {% endfor %}
                     </div>
                 </div>
             </div>

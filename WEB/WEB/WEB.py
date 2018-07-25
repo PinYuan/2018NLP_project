@@ -17,7 +17,7 @@ dictWord = eval(open('utils/data/autoFindPattern/wordPG.txt', 'r').read())
 phraseV = eval(open('utils/data/autoFindPattern/phrase(V).txt', 'r').read())
 
 # read translation
-TRANS = eval(open('utils/data/wordTranslation.txt', 'r').read()) # tran[pos][word] = [translation...]
+TRANS = eval(open('utils/data/final TRANS.txt', 'r').read()) # tran[pos][word] = [translation...]
 
 app = Flask(__name__ )
 import datetime
@@ -33,14 +33,43 @@ def index():
 
 @app.route('/handle_data', methods=['POST', 'GET'])
 def handle_data():
-    url = request.form['url']
     user_level = request.form['user_level']
-    response = requests.get(url)
-    doc = Document(remove_a(response.text))
-    title = doc.short_title()
-    publish_date = getPublishDate(url)
-    content = clean_content(doc.summary())
-    new = create_article(title, user_level, content,  'download/'+title+'_article.pdf', \
+    url = ''
+    title = ''
+    publish_date = ''
+    try:
+        url = request.form['url']
+        if (url.startswith('http://www.youtube.com') 
+            or url.startswith('http://youtube.com') 
+            or url.startswith('http://youtu.be') 
+            or url.startswith('https://www.youtube.com') 
+            or url.startswith('https://youtube.com') 
+            or url.startswith('https://youtu.be')):
+            v_id = url.split('=')[-1]
+            url = "https://www.youtube.com/api/timedtext?name=&fmt=vtt&lang=en&v=%s" % (v_id)
+            r = requests.get(url)
+            if r.status_code >= 400:content = "There's no English caption."
+            else: content = [v_id, r.text]
+            type_ = 'youtube'
+            url = "https://www.youtube.com/watch?v=%s" % (v_id)
+            r = requests.get(url)
+            if r.status_code < 400:
+                title = BeautifulSoup(r.text, 'html.parser').find('title').text
+                publish_date = BeautifulSoup(r.text, 'html.parser').find('meta', itemprop="datePublished")['content']
+        else:
+            response = requests.get(url)
+            doc = Document(response.content)
+            title = doc.short_title()
+            publish_date = getPublishDate(response.content.decode('UTF-8'))
+            content = doc.summary()
+            type_ = 'url'
+    except:
+        text = request.form['text']
+        content = text
+        type_ = 'text'
+        
+    content = clean_content(content, type_)
+    new = create_article(title, user_level, content, type_=='youtube', \
                          set(dictWord['V'].keys()), set(dictWord['N'].keys()), set(dictWord['ADJ'].keys()))
     
     return render_template('format.html', title=title, publish_date=publish_date, \
@@ -64,8 +93,8 @@ def ajax_request():
     phraseTable = defaultdict(lambda: defaultdict(lambda: []))
     # phraseOrder = [phrase...]
     phraseOrder = []
-    # trans[pos] = [translation]
-    trans = defaultdict(lambda: defaultdict(lambda: set())) 
+    # trans[type][pos] = [translation]
+    trans = defaultdict(lambda: defaultdict(lambda: list())) 
     
     for pos in poses:
         if word in dictWord[pos].keys():
@@ -79,10 +108,14 @@ def ajax_request():
             for phrase in phraseOrder:
                 for pat, colls, examp in phraseV[word][phrase]:
                     phraseTable[pos][phrase] += [(pat, ', '.join(colls[:3]), examp)]
+                    phrase = phrase.split('%')[0]
+                    if phrase in TRANS['phrase'][pos].keys():
+                        trans['phrase'][phrase] = TRANS['phrase'][pos][phrase]
+                    else:
+                        trans['phrase'][phrase] = []
 
-        if word in TRANS[pos].keys():
-            trans[pos] = TRANS[pos][word]
-                             
+        if word in set(TRANS['pat'][pos].keys()):
+            trans['pat'][pos] = TRANS['pat'][pos][word]
     return jsonify(patternTable=patternTable, \
                    phraseTable=phraseTable, phraseOrder=phraseOrder, \
                    trans=trans)

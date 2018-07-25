@@ -1,30 +1,14 @@
 import re
 import nltk
-try: 
-    from urllib.request import urlopen, Request
-except:
-    import urllib
-    
-def getPublishDate(url):
-         # 1 year; 3 month; 5 date; 6 time  (?is)(\d{4}|\d{2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\s?(\d{2}:\d{2}?)
-        try:
-            response = urlopen(Request(url, headers={'User-Agent': 'Mozilla'}))
-        except:
-            response = urllib.urlopen(url)
-            
-        html = response.read().decode('UTF-8')
-        
-        publishDate = ""
-        search_result = re.search("(?is)(\d{4}|\d{2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})", html)
-        if search_result != None:
-            publishDate = search_result.group(1) + '-' + search_result.group(3) + '-' + search_result.group(5)
-        return publishDate
+from bs4 import BeautifulSoup 
 
-
-def remove_a(text):
-    text = re.sub('(?is)<a.*?>', '', text)
-    text = re.sub('(?is)</a>', '', text)
-    return text
+def getPublishDate(html):
+     # 1 year; 3 month; 5 date; 6 time  (?is)(\d{4}|\d{2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\s?(\d{2}:\d{2}?)
+    search_result = re.search("(?is)(\d{4}|\d{2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})", html)
+    if search_result != None:
+        return search_result.group(1) + '-' + search_result.group(3) + '-' + search_result.group(5)
+    else:
+        return ''
     
 def clean_content(content, inputType):
     def sentence_tokenize(content):
@@ -33,36 +17,34 @@ def clean_content(content, inputType):
         #sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', content)
         return sent_text
     
+    # remove all attributes
+    def _remove_all_attrs(soup):
+        for tag in soup.find_all(True): 
+            tag.attrs = {}
+        return soup
+    
+    new_content = []
+    
     if inputType == 'url':
-        content = re.sub('(?is)<div.*?>', '<div>', content)
-        content = re.sub('(?is)<p.*?>', '<p>', content)
-        content = re.sub('(?is)<a.*?>', '<a>', content)
+        soup = BeautifulSoup(content, 'html.parser')
+        
+        # 移除底線與超連結，但保留其內部html
+        invalid_tags = ['u', 'a']
+        for tag in invalid_tags: 
+            for match in soup.findAll(tag):
+                match.replaceWithChildren()
 
-        content = content[17:-20] # remove html, body, div 
-        content = re.sub('<p>', '[p]', content)
-        content = re.sub('<h2>', '[h2]', content)
-        content = re.sub('<h3>', '[h3]', content)
-        content = re.sub('<.*?>', '', content)
+        soup = _remove_all_attrs(soup)
+        soup = soup.find_all(['p', 'h2', 'h3'])
+        
+        for sub_content in soup:
+            tag = sub_content.name
+            sub_content = re.sub('<p>|</p>|<h2>|</h2>|<h3>|</h3>', '', str(sub_content))
+            new_content += [[tag, list(filter(None, sentence_tokenize(sub_content)))]]
 
-        content = re.split('\[p\]', content)
-
-        new_content = []
-        for p in content[1:]:
-            p = p.strip()
-            if p.startswith('[h2]'):
-                p = p.replace('[h2]', '')
-                temp = ['h2', p]
-            elif p.startswith('[h3]'):
-                p = p.replace('[h3]', '')
-                temp = ['h3', p]
-            else:
-                temp = ['p', list(filter(None, sentence_tokenize(p)))]
-
-            new_content.append(temp)
     elif inputType == 'youtube':
         v_id = content[0]
         content = content[1].split('\n\n')
-        new_content = list()
         for p in content:
             if '-->' in p:
                 p = p.split(' --> ', 1)
@@ -75,7 +57,6 @@ def clean_content(content, inputType):
                 new_content.append(['p', p]) # .split('\n', 1)[-1].replace('\n', ' ')
     else:
         content = content.split('\n')
-        new_content = []
         for p in content:
             p = p.strip()
             if p:
