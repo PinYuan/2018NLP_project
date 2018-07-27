@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, url_for, send_file, jsonify
-from selenium import webdriver
+# from selenium import webdriver
 from bs4 import BeautifulSoup
 
 import os
@@ -58,7 +58,7 @@ def handle_data():
                 publish_date = BeautifulSoup(r.text, 'html.parser').find('meta', itemprop="datePublished")['content']
         else:
             response = requests.get(url)
-            doc = Document(response.content)
+            doc = Document(remove_sometag(response.text))
             title = doc.short_title()
             publish_date = getPublishDate(response.content.decode('UTF-8'))
             content = doc.summary()

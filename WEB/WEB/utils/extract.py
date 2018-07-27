@@ -9,6 +9,16 @@ def getPublishDate(html):
         return search_result.group(1) + '-' + search_result.group(3) + '-' + search_result.group(5)
     else:
         return ''
+
+def remove_sometag(text):
+    soup = BeautifulSoup(text, 'html.parser')
+        
+    # 移除底線與超連結，但保留其內部html
+    invalid_tags = ['u', 'a']
+    for tag in invalid_tags: 
+        for match in soup.findAll(tag):
+            match.replaceWithChildren() 
+    return str(soup)
     
 def clean_content(content, inputType):
     def sentence_tokenize(content):
@@ -28,14 +38,8 @@ def clean_content(content, inputType):
     if inputType == 'url':
         soup = BeautifulSoup(content, 'html.parser')
         
-        # 移除底線與超連結，但保留其內部html
-        invalid_tags = ['u', 'a']
-        for tag in invalid_tags: 
-            for match in soup.findAll(tag):
-                match.replaceWithChildren()
-
         soup = _remove_all_attrs(soup)
-        soup = soup.find_all(['p', 'h2', 'h3'])
+        soup = [sub for sub in soup.find_all(['p', 'h2', 'h3']) if sub.h2 == None and sub.h3 == None]
         
         for sub_content in soup:
             tag = sub_content.name
