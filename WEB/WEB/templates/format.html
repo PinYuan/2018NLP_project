@@ -204,6 +204,16 @@
             transform: translateY(20%);
             margin-left: 20px;
         }
+        /* NER 提示*/
+        .NER {
+            color: #2196F3;
+        }
+        
+        .NER:hover {
+            color: #ddd;
+        }
+        
+        
         /* 右側的nav-tabs */
         .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
             color: #2196F3;
@@ -408,17 +418,47 @@
         
         function genTable(word, patterns) {
             var table = '</h2><table class="table"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody>'
+            
+            var noreplace = new Set('under|without|around|round|about|after|against|among|as|at|between|behind|by|for|from|in|into|of|on|upon|over|through|to|toward|off|on|across|towards|with|out|N|V|ADJ'.split('|'))
+            var NER = new Set(['&lt;GPE&gt;', '&lt;NORP&gt;', '&lt;TIME&gt;', '&lt;MONEY&gt;'])
+            
             for ( patIndex in patterns ) {
                 var tuple = patterns[patIndex];
                 var pat, percent, colls, en, ch, source;
                 pat = tuple[0].split("%")[0]
                 percent = tuple[0].split("%")[1]
-                colls = tuple[1]
+                colls = tuple[1].split(", ")
                 en = tuple[2][0]
                 ch = tuple[2][1]
                 source = tuple[2][2]
 
-                table += '<tr><td style="color: indianred;">' + pat + '</td><td style="text-align: center;">' + percent + "%</td><td>" + colls + "</td></tr>" 
+                /* 重新整理collation呈現，含NER*/
+                patList = pat.split(" ")
+                var newcolls = []           
+                for ( let coll of colls ) {
+                    coll = coll.split('_')
+                    
+                    newcoll = []
+                    for ( let p of patList ) {
+                        if (noreplace.has(p)) 
+                            newcoll.push(p)
+                        else { 
+                            if (NER.has(coll[0])) {
+                                if (coll[0] == '&lt;GPE&gt;') newcoll.push('<span class="NER" title="EX. US, UK, Scotland, Chicago">GPE</span>') 
+                                else if (coll[0] == '&lt;NORP&gt;') newcoll.push('<span class="NER" title="EX. Americans, Asians, Canadians, Italian">NORP</span>') 
+                                else if (coll[0] == '&lt;TIME&gt;') newcoll.push('<span class="NER" title="EX. year, month, date, minute">TIME</span>') 
+                                else if (coll[0] == '&lt;MONEY&gt;') newcoll.push('<span class="NER" title="EX. billion, million, dollar, cent">MONEY</span>') 
+                            }
+                            else newcoll.push(coll[0])
+                            coll.shift()
+                        }
+                    }
+                    newcoll = newcoll.join(' ')
+                    newcolls.push(newcoll)
+                }
+                newcolls = newcolls.join(', ')
+                
+                table += '<tr><td style="color: indianred;">' + pat + '</td><td style="text-align: center;">' + percent + "%</td><td>" + newcolls + "</td></tr>" 
                 if (en != "") table += '<tr><td style="background: #f2f2f2; " colspan=3>' + en
                 if (ch != "") table += "<br>" + ch + ' '
                 if (source == "cam") table += "<a href='https://dictionary.cambridge.org/zht/詞典/英語-漢語-繁體/" + word.toLowerCase() + "' target='blank_'><span class='glyphicon glyphicon-book'></span></a>"
