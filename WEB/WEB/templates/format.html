@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>LingBooster</title>
+    <title>LinggleBooster</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -461,7 +461,7 @@
                 table += '<tr><td style="color: indianred;">' + pat + '</td><td style="text-align: center;">' + percent + "%</td><td>" + newcolls + "</td></tr>" 
                 if (en != "") table += '<tr><td style="background: #f2f2f2; " colspan=3>' + en
                 if (ch != "") table += "<br>" + ch + ' '
-                if (source == "cam") table += "<a href='https://dictionary.cambridge.org/zht/詞典/英語-漢語-繁體/" + word.toLowerCase() + "' target='blank_'><span class='glyphicon glyphicon-book'></span></a>"
+                if (source == "cam") table += "<a href='https://dictionary.cambridge.org/zht/搜索/english-chinese-traditional/direct/?q=" + word.toLowerCase() + "' target='blank_'><span class='glyphicon glyphicon-book'></span></a>"
                 table += "</tr>"
             }
             table += "</tbody></table>"
