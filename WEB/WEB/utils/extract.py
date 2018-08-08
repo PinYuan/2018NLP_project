@@ -65,5 +65,5 @@ def clean_content(content, inputType):
             p = p.strip()
             if p:
                 temp = ['p', [p]]
-            new_content.append(temp)
+                new_content.append(temp)
     return new_content
