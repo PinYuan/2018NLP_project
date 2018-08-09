@@ -251,11 +251,13 @@
     </nav>
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
         <div class="leftDiv">
-            <div class="scrollbar"></div>
             <form action="/" method="post">
                 <button type="submit" class="btn btn-default">Return</button>
+                <div class="btn-group" style="float: right;">
+                    <a id="increase-font" type="button" class="btn btn-primary" href="#"> A+ </a>
+                    <a id="decrease-font" type="button" class="btn btn-primary" href="#"> A- </a>
+                </div>
             </form>
-
             <div class="text-body">
                 <h1>{{title}}</h1>
                 <div class="post">
@@ -363,6 +365,44 @@
             }
         }
         */
+        
+        
+        //http://wp.tutsplus.com/tutorials/theme-development/creating-a-wordpress-post-text-size-changer-using-jquery/
+        // This prevents the execution of the code before the document is finished loading.
+        jQuery(document).ready(function() {
+            // The 'A+' element  in the page is associated with the jQuery click() event.
+            jQuery('#increase-font').click(function(event) {
+                // This prevents the default action of the click() event from being triggered.
+                event.preventDefault();
+                // The jQuery each() event interates over each elements belonging to the 'resize' class
+                jQuery('p').each(function() {
+                    // Call to a custom function to increase the text size
+                    changeTextSize(this, change);
+                });
+            });
+            // The 'A-' element  in the page is associated with the jQuery click() event.
+            jQuery('#decrease-font').click(function(event) {
+                // This prevents the default action of the click() event from being triggered.
+                event.preventDefault();
+                // The jQuery each() event interates over each elements belonging to the 'resize' class
+                jQuery('p').each(function() {
+                    // Call to a custom function to decrease the text size
+                    changeTextSize(this, -change);
+                });
+            });
+        });
+        // Three variables have been used to define range of the text size and the increment/decrement value respectively.
+        var min = 8, max = 30, change = 1;
+        // Defines a custom function with two parameters determining the element to be resized and the size
+        function changeTextSize(element, value) {
+            var currentSize = parseFloat(jQuery(element).css('font-size'));
+            var newSize = currentSize + value;
+            if (newSize <= max && newSize >= min) {
+                jQuery(element).css('font-size', newSize + 'px');
+            }
+        }
+        
+        
         function labelWord(obj) {            
             if (document.getElementById("wordLevel"+obj).getAttribute('data-check') == "true") {
                 document.getElementById("wordLevel"+obj).setAttribute('data-check', "false");
