@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, url_for, send_file, jsonify
-# from selenium import webdriver
+from selenium import webdriver
 from bs4 import BeautifulSoup
 
 import os
@@ -13,12 +13,12 @@ from readability import Document
 
 from utils.create_pdf.create_article import *
 
+import youtube_dl
 dictWord = eval(open('utils/data/autoFindPattern/wordPG.txt', 'r').read())
 phraseV = eval(open('utils/data/autoFindPattern/phrase(V).txt', 'r').read())
 
 # read translation
 TRANS = eval(open('utils/data/final TRANS.txt', 'r').read()) # tran[pos][word] = [translation...]
-
 app = Flask(__name__ )
 import datetime
 # egp = load_egp() # grammar pattern
@@ -33,41 +33,72 @@ def index():
 
 @app.route('/handle_data', methods=['POST', 'GET'])
 def handle_data():
+    def cleancap(raw_cap):
+        cleanr = re.compile('<.*?>')
+        cleantext = re.sub(cleanr, '', raw_cap)
+        tmp = cleantext.split('\n')
+        cap = list()
+        pre = ''
+        for line in tmp:
+            if line.replace(' ', '') and line != pre:
+                if '-->' in line: cap.append('')
+                else: pre = line
+                cap.append(line)
+        tmp = set()
+        for idx in range(len(cap)):
+            if '-->' in cap[idx] and (idx >= len(cap)-2 or '-->' in cap[idx+2]):
+                tmp.add(idx)
+                tmp.add(idx+1)
+        final = list()
+        for idx in range(len(cap)):
+            if idx not in tmp: final.append(cap[idx])
+        return '\n'.join(final)
+    
     user_level = request.form['user_level']
-    url = ''
     title = ''
     publish_date = ''
-    try:
-        url = request.form['url']
-        if (url.startswith('http://www.youtube.com') 
-            or url.startswith('http://youtube.com') 
-            or url.startswith('http://youtu.be') 
-            or url.startswith('https://www.youtube.com') 
-            or url.startswith('https://youtube.com') 
-            or url.startswith('https://youtu.be')):
-            v_id = url.split('=')[-1]
-            url = "https://www.youtube.com/api/timedtext?name=&fmt=vtt&lang=en&v=%s" % (v_id)
-            r = requests.get(url)
-            if r.status_code >= 400:content = "There's no English caption."
-            else: content = [v_id, r.text]
-            type_ = 'youtube'
-            url = "https://www.youtube.com/watch?v=%s" % (v_id)
-            r = requests.get(url)
-            if r.status_code < 400:
-                title = BeautifulSoup(r.text, 'html.parser').find('title').text
-                publish_date = BeautifulSoup(r.text, 'html.parser').find('meta', itemprop="datePublished")['content']
-        else:
-            response = requests.get(url)
-            doc = Document(remove_sometag(response.text))
-            title = doc.short_title()
-            publish_date = getPublishDate(response.content.decode('UTF-8'))
-            content = doc.summary()
-            type_ = 'url'
-    except:
-        text = request.form['text']
+    text = request.form['text']
+    if (text.startswith('http://www.youtube.com')
+        or text.startswith('http://youtube.com') 
+        or text.startswith('http://youtu.be') 
+        or text.startswith('https://www.youtube.com') 
+        or text.startswith('https://youtube.com') 
+        or text.startswith('https://youtu.be')):
+        ydl_opts = {
+            'writesubtitles': True,
+            'writeautomaticsub': True,
+            'skip_download': True, # We just want to extract the info
+            'outtmpl': 'download/target' # file_path/target
+        }
+        file = ''
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([text])
+            dirPath = "download"
+            fileList = os.listdir(dirPath)
+            if 'target.en.vtt' in fileList:
+                file = cleancap(open('download/target.en.vtt').read())
+            else:
+                file = 'There is no english substitle in this video!'
+            for fileName in fileList:
+                if os.path.isfile(os.path.join(dirPath, fileName)): os.remove(os.path.join(dirPath, fileName))
+        v_id = text.split('=')[-1]
+        content = [v_id, file]
+        type_ = 'youtube'
+        r = requests.get(text)
+        if r.status_code < 400:
+            title = BeautifulSoup(r.text, 'html.parser').find('title').text
+            publish_date = BeautifulSoup(r.text, 'html.parser').find('meta', itemprop="datePublished")['content']
+    elif text.startswith('http://') or text.startswith('https://'):
+        response = requests.get(text)
+        doc = Document(remove_sometag(response.text))
+        title = doc.short_title()
+        publish_date = getPublishDate(response.content.decode('UTF-8'))
+        content = doc.summary()
+        type_ = 'url'
+    else:
         content = text
         type_ = 'text'
-        
+            
     content = clean_content(content, type_)
     new = create_article(title, user_level, content, type_=='youtube', \
                          set(dictWord['V'].keys()), set(dictWord['N'].keys()), set(dictWord['ADJ'].keys()))
@@ -116,6 +147,8 @@ def ajax_request():
 
         if word in set(TRANS['pat'][pos].keys()):
             trans['pat'][pos] = TRANS['pat'][pos][word]
+        else:
+            trans['pat'][pos] = []
     return jsonify(patternTable=patternTable, \
                    phraseTable=phraseTable, phraseOrder=phraseOrder, \
                    trans=trans)
@@ -135,5 +168,5 @@ def dated_url_for(endpoint, **values):
     return url_for(endpoint, **values)   
 
 if __name__ == '__main__':
-#     app.run(debug=False)
+    #app.run(debug=False)
     app.run(host='0.0.0.0', port=int("5487"), debug=False)
