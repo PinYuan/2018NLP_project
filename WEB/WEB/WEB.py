@@ -14,11 +14,13 @@ from readability import Document
 from utils.create_pdf.create_article import *
 
 import youtube_dl
+
 dictWord = eval(open('utils/data/autoFindPattern/wordPG.txt', 'r').read())
 phraseV = eval(open('utils/data/autoFindPattern/phrase(V).txt', 'r').read())
 
 # read translation
 TRANS = eval(open('utils/data/final TRANS.txt', 'r').read()) # tran[pos][word] = [translation...]
+
 app = Flask(__name__ )
 import datetime
 # egp = load_egp() # grammar pattern
@@ -118,6 +120,7 @@ def ajax_request():
     word = request.form['word'].lower() if request.form['pos'] != 'x' else request.form['word'].split()[0].lower()  
     poses = ['V', 'N', 'ADJ'] if len(request.form['word'].split())==1 else [p.upper() for p in request.form['word'].split()[1:]]
     
+    finalWord = word
     # patternTable[pos] = [(pat, colls, (en, ch, source)), ...] 
     patternTable = defaultdict(lambda: [])
     # phraseTable[pos][phrase] = [pat, (colls, (en, ch, source)), ...] 
@@ -144,12 +147,39 @@ def ajax_request():
                         trans['phrase'][phrase] = TRANS['phrase'][pos][phrase]
                     else:
                         trans['phrase'][phrase] = []
-
-        if word in set(TRANS['pat'][pos].keys()):
-            trans['pat'][pos] = TRANS['pat'][pos][word]
+        if finalWord in set(TRANS['pat'][pos].keys()):
+            trans['pat'][pos] = TRANS['pat'][pos][finalWord]
         else:
             trans['pat'][pos] = []
-    return jsonify(patternTable=patternTable, \
+    
+    if not patternTable.keys():
+        for pos in poses:
+            if finalWord == word or not finalWord: finalWord = wordnet(word, pos, set(dictWord[pos].keys()))
+            if finalWord and finalWord != word:
+                if finalWord in dictWord[pos].keys():
+                    for pat, colls, examp in dictWord[pos][finalWord][:5]:
+                        patternTable[pos] += [(pat, ', '.join(colls[:3]), examp)]
+                        
+                if pos == 'V' and finalWord in phraseV.keys():
+                    # 前面以過濾過phrase至多3個, pat已用std過濾
+                    phraseOrder = sorted(phraseV[finalWord].keys(), key=lambda x: -int(x.rsplit('%', 1)[1]))
+                    for phrase in phraseOrder:
+                        for pat, colls, examp in phraseV[finalWord][phrase]:
+                            phraseTable[pos][phrase] += [(pat, ', '.join(colls[:3]), examp)]
+                            phrase = phrase.split('%')[0]
+                            if phrase in TRANS['phrase'][pos].keys():
+                                trans['phrase'][phrase] = TRANS['phrase'][pos][phrase]
+                            else:
+                                trans['phrase'][phrase] = []
+                if finalWord in set(TRANS['pat'][pos].keys()):
+                    trans['pat'][pos] = TRANS['pat'][pos][finalWord]
+                else:
+                    trans['pat'][pos] = []
+                        
+                        
+                        
+    return jsonify(finalWord=finalWord, \
+                   patternTable=patternTable, \
                    phraseTable=phraseTable, phraseOrder=phraseOrder, \
                    trans=trans)
 

@@ -13,7 +13,7 @@
         * {
             line-height: 1.6;
         }
-        body {
+        body, td, th, a, div, button, input {
             font-family: "Verdana", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             font-size: 16px;
         }
@@ -375,7 +375,7 @@
                 // This prevents the default action of the click() event from being triggered.
                 event.preventDefault();
                 // The jQuery each() event interates over each elements belonging to the 'resize' class
-                jQuery('p').each(function() {
+                jQuery('p, th, td, div, a, button, input').each(function() {
                     // Call to a custom function to increase the text size
                     changeTextSize(this, change);
                 });
@@ -385,7 +385,7 @@
                 // This prevents the default action of the click() event from being triggered.
                 event.preventDefault();
                 // The jQuery each() event interates over each elements belonging to the 'resize' class
-                jQuery('p').each(function() {
+                jQuery('p, th, td, div, a, button, input').each(function() {
                     // Call to a custom function to decrease the text size
                     changeTextSize(this, -change);
                 });
@@ -520,7 +520,11 @@
                     if (word != null) {
                         var pos = evt.target.getAttribute("data-pos")
                         // patttern
-                        var patTable = '<h2>' + word + '<span data-pos="' + pos + '"></span>'
+                        var patTable = '';
+                        if (word != evt.target.getAttribute("data-lemma").toUpperCase()){
+                            patTable += '<p>Since there is no information about "'+evt.target.getAttribute("data-lemma")+'", we show a synonym for this word.</p>';
+                        }
+                        patTable += '<h2>' + word + '<span data-pos="' + pos + '"></span>'
                         patTable += genTrans(response.trans['pat'][pos])
                         patTable += genTable(word.toLowerCase(), response.patternTable[pos])
                         document.getElementById("patTable").innerHTML = patTable;
@@ -528,6 +532,9 @@
                         
                         // phrase
                         var phrTable = ''
+                        if (word != evt.target.getAttribute("data-lemma").toUpperCase()){
+                            phrTable += '<p>Since there is no information about "'+evt.target.getAttribute("data-lemma")+'", we show a synonym for this word.</p>';
+                        }
                         if ( response.phraseOrder.length > 0 ) {
                             for ( phraseIndex in response.phraseOrder ) {
                                 var phrase = response.phraseOrder[phraseIndex]
@@ -547,7 +554,7 @@
             xmlhttp.open('POST', '/ajax')
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
             //alert(evt.target.parentElement.parentElement.getAttribute("data-word"))
-            var postVars = 'word=' + evt.target.getAttribute("data-word") + '&pos=' + evt.target.getAttribute("data-pos")
+            var postVars = 'word=' + evt.target.getAttribute("data-word") + '&lemma=' + evt.target.getAttribute("data-lemma") + '&pos=' + evt.target.getAttribute("data-pos")
             //var postVars = 'word='+evt.target.firstChild.nodeValue+'&pos=V'
 
             xmlhttp.send(postVars);
@@ -560,14 +567,16 @@
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var response = JSON.parse(xmlhttp.responseText)
-                    var word = document.getElementById("search_word").value.split(' ')[0].toUpperCase();
+                    var word = response.finalWord.toUpperCase();
                     var patTable = ''
                     var phrTable = ''
                     if (word != null) {
                         // pattern
                         for (let pos of ['V', 'N', 'ADJ']) {
                             if (pos in response.patternTable === false) continue
-                            
+                            if (word != document.getElementById("search_word").value.toUpperCase()){
+                                patTable += '<p>Since there is no information about "'+document.getElementById("search_word").value+'", we show a synonym for this word.</p>';
+                            }
                             patTable += '<h2>' + word + '<span data-pos="' + pos +'"></span>'
                             patTable += genTrans(response.trans['pat'][pos])
                             patTable += genTable(word.toLowerCase(), response.patternTable[pos])
@@ -582,6 +591,9 @@
                         if ( response.phraseOrder.length > 0 ) {
                             for ( phraseIndex in response.phraseOrder ) {
                                 var phrase = response.phraseOrder[phraseIndex]
+                                if (word != document.getElementById("search_word").value.toUpperCase()){
+                                    phrTable += '<p>Since there is no information about "'+document.getElementById("search_word").value+'", we show a synonym for this word.</p>';
+                                }
                                 phrTable += '<h2>' + phrase.split('%')[0] /*+ '<span data-pos="' + pos + '"></span>'*/
                                 phrTable += genTrans(response.trans['phrase'][phrase.split('%')[0]])
                                 phrTable += genTable(word.toLowerCase(), response.phraseTable['V'][phrase])
@@ -597,7 +609,7 @@
             };
             xmlhttp.open('POST', '/ajax')
             xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-            var postVars = 'word=' + document.getElementById("search_word").value + '&pos=x'
+            var postVars = 'word=' + document.getElementById("search_word").value + '&lemma=x&pos=x'
 
             xmlhttp.send(postVars);
 
