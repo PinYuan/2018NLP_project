@@ -1,0 +1,53 @@
+h4{
+  word-wrap: break-word;
+}
+span{
+ margin-left: 5px;
+}
+input[type="radio"] + label:hover{
+  background-color:;
+  border:1px solid #000000;
+}
+input[type="radio"] + label {
+ display: block;
+ word-wrap: break-word;
+ min-width: 120px;
+ width: auto;
+ display: inline-block;
+ padding: 10px; 
+ border: 1px  solid #ddd ;
+ text-align: center;
+ /*text-overflow: ellipsis;*/
+ /*white-space: nowrap;*/
+ margin-bottom: 10px;
+ cursor: pointer;
+ color: black;
+}
+input[type="radio"]:checked + label {
+  background: black;
+  border-color: white;
+  color: white;
+}
+input[type="radio"],
+input.radio {
+  display: block;
+  word-wrap: break-word;
+  float: left;
+  clear: none;
+  margin: 2px 0 0 2px;
+  visibility: hidden;
+}
+
+/*button {
+ width: 95%;
+ padding: 10px;
+ border: 1px  solid #ddd;
+ width: 15%; 
+ text-align: center;
+/* text-overflow: ellipsis;*/
+ /*margin-bottom: 10px;
+ margin-top: -15px;
+ margin-left: 60%;
+ cursor:　pointer;
+ background: white
+}*/
