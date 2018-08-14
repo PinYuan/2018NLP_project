@@ -298,6 +298,7 @@
                 <button onclick="labelWord('A')" id="wordLevelA" class="subbtn" data-check="false">A</button>
                 <button onclick="labelWord('B')" id="wordLevelB" class="subbtn" data-check="false">B</button>
                 <button onclick="labelWord('C')" id="wordLevelC" class="subbtn" data-check="false">C</button>
+                <button onclick="quizGeneration()" id="quiz" class="subbtn" data-check="false">Quiz</button>
             </div>
             <button id="functionbtn" onclick="showHide(1);">+</button>
             
@@ -561,7 +562,10 @@
 
         }
         test.addEventListener("click", whatClicked, false);
-
+        // press button and redirect to quiz page 
+        function quizGeneration(){
+            window.open ('/index2','_self',false)
+        }
         function search() {
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
