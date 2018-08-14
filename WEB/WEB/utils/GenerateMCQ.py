@@ -1,7 +1,7 @@
 from collections import defaultdict
 import random
 import json
-
+from pprint import  pprint
 def shuffle_vocab_dict(voc_dict,question_number):
     if(len(voc_dict)<question_number): num = len(voc_dict)
     else: num = question_number
@@ -99,9 +99,9 @@ def mcqGDEX(wordL,word_pos,gdexDB,questionDict):
         if(word_pos in gdexDB[wordL]):
             questionDict[wordL]["sentence"] = gdexDB[wordL][word_pos][1:-1]  #delete bracket
         else:
-            questionDict[wordL]["sentence"] = ""
+            return ""
     else:  # if word is not in database, ignore it
-        questionDict[wordL]["sentence"] = ""
+        return ""
     return questionDict[wordL]["sentence"]
 def remove_punc(s):
     indices = [i for i, x in enumerate(s) if x == "\\"]  # replace ' punctuation
@@ -122,46 +122,26 @@ def remove_punc(s):
 def generateOrderQ(listOfSentences):
     senPList = []
     orderDict = defaultdict(lambda: dict())
-    ind = 0
     for sent in listOfSentences:
         tmp = sent.split(",")
-        if( len(tmp) > 1 and len(tmp[0]) > 20):
-            ind = ind + 1
+        if( len(tmp) > 1 and len(tmp[0]) > 15 and len(tmp[1]) > 15
+            and len(tmp[0]) < 100 and len(tmp[1]) < 100):
             senPList.append(tmp)
-    flag = False
-    noQuestion = False
-    choiceList = []
-    for index in range(len(senPList)):
-        if(not flag):
-            if(index < 1):
-                randomQ = 1000
-                noQuestion = True
-                break
-            randomQ = random.randint(1, ind-1)
-            lenQ = len(senPList[randomQ][0])
-            lenA = len(senPList[randomQ][1])
-            if((lenQ > 25 and lenQ < 100)
-             and  ((lenA) > 25 and lenA < 100)): flag = True
-        lenA = len(senPList[index][1])
-        if( (lenA) > 25 and lenA < 100 and index!= randomQ):
-            s = remove_punc(senPList[index][1])
-            choiceList.append(s)
-    random.shuffle(choiceList)
-    choiceList = choiceList[:3]
-    if(noQuestion == False):
-        s2 = remove_punc(senPList[randomQ][1])
-        choiceList.append(s2)
-        random.shuffle(choiceList)
-        ans = choiceList.index(s2) + 1
-        tmpq = remove_punc(senPList[randomQ][0])
-        orderDict[randomQ]["sentence"] = tmpq+","
-        orderDict[randomQ]["distractor"] = choiceList[:4]
-        orderDict[randomQ]["answer"] = ans
-    elif(noQuestion == True):
-        return orderDict
-    if(orderDict[randomQ]):
-        if(len(orderDict[randomQ]["distractor"]) < 4):
-            orderDict[randomQ]["answer"] = -1
+    random.shuffle(senPList)
+    choiceList = [remove_punc(x[1]) for x in senPList if len(x) > 1]
+    questionList = [remove_punc(x[0]) for x in senPList if len(x) > 1]
+    for q_num in range(1):
+        if(len(choiceList) >= 4 and len(questionList) >= 1):
+            orderDict[q_num]["sentence"] = questionList[0]
+            ans = choiceList[0]
+            orderDict[q_num]["distractor"] = random.shuffle(choiceList[:4])
+            orderDict[q_num]["answer"] = choiceList.index(ans) + 1
+            questionList = questionList[4:]
+            choiceList = choiceList[4:]
+        else:
+            orderDict[q_num]["sentence"] = ""
+            orderDict[q_num]["distractor"] = ""
+            orderDict[q_num]["answer"] = -1
     return orderDict
 def multipleChoiceHtml(questionDict,html,proNum,sliceList,vocab):
     distractorNum = 4
@@ -441,6 +421,8 @@ def mcqDistractor(wordL,disDB):
         distracotrCand.append(wordL)
         for value in disDB[wordL]:
             distracotrCand.append(value)
+        if(len(distracotrCand) < 4):
+            return "",-1
     else:  # if word is not in database, ignore it or search it right now
         return "",-1
     random.shuffle(distracotrCand)
@@ -452,12 +434,13 @@ def generateMCQ(vocList,pro_num,level,pure_text):
     for word in vocList:
         wordL = vocList[word]["lemma"]
         word_pos =  get_spacy_pos(vocList[word]['pos'])
-        questionDict[wordL]["sentence"] = mcqGDEX(wordL,word_pos,gdexDB,questionDict) #generate GDEX
-        if(questionDict[wordL]["sentence"] == ""):
-            questionDict[wordL]["distractor"], questionDict[wordL]["answer"] ="",-1
-        if(questionDict[wordL]["sentence"]):
-            questionDict[wordL]["distractor"],questionDict[wordL]["answer"] = mcqDistractor(wordL, disDB) # generate distractor
-        else:   # if no sentence exists, skip this vocabulary.
+        tmp_sentence = mcqGDEX(wordL, word_pos, gdexDB, questionDict) #generate GDEX
+        tmp_distractor,tmp_ans = mcqDistractor(wordL, disDB) # generate distractor
+        if(tmp_sentence!="" and tmp_distractor!="" and tmp_ans!=-1):
+            questionDict[wordL]["sentence"] = tmp_sentence
+            questionDict[wordL]["distractor"] = tmp_distractor
+            questionDict[wordL]["answer"] = tmp_ans
+        else:
             continue
     orderDict = generateOrderQ(pure_text)  #generate order question
     category = 2
