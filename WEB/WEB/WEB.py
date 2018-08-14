@@ -12,6 +12,7 @@ from utils.create_pdf import *
 from readability import Document
 
 from utils.create_pdf.create_article import *
+from utils.GenerateMCQ import *        # import quiz generation
 
 import youtube_dl
 
@@ -33,6 +34,10 @@ def index():
     return render_template('index.html')
     #return render_template('format.html', title=title, publish_date=publish_date, content=new, user_level=user_level, grade=grade)
 
+def store(*values):  # store value from handle_data() and pass to quiz() 
+    store.values = values or store.values
+    return store.values    
+   
 @app.route('/handle_data', methods=['POST', 'GET'])
 def handle_data():
     def cleancap(raw_cap):
@@ -108,6 +113,22 @@ def handle_data():
     return render_template('format.html', title=title, publish_date=publish_date, \
                            user_level=user_level, content=new) 
 
+@app.route('/index2', methods=['POST', 'GET'])
+def quiz():
+    pure_text,vocab_dict,user_level = store()  
+    tmpDict = extractVocList2(vocab_dict,user_level,10)  #extract vocabulary list 
+    o = shuffle_vocab_dict(tmpDict,10)  # randomly pick up n vocabularies
+    questionDict, orderDict, pro_num, category = generateMCQ(o, 0, user_level,pure_text)
+    type_ = "text"
+    q = merge_two_dicts(questionDict,orderDict)
+    vocab = transformFormat(q, type_ == 'youtube', \
+                            set(dictWord['V'].keys()), set(dictWord['N'].keys()), set(dictWord['ADJ'].keys()))
+    generateWeb(questionDict,orderDict,pro_num,category,vocab,pure_text)  # generate web file(html+js)
+    file = open("./templates/index2.html", "r", encoding="utf-8")  
+    con = file.read() # read html and js file and write into format2.html
+    return render_template('format2.html', title="quiz", publish_date="2018.8.11", \
+                           user_level="B", content=con)                        
+                           
 @app.route('/download/<filename>', methods=['GET'])
 def return_reformatted(filename):
     try:
