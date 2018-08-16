@@ -133,9 +133,10 @@ def generateOrderQ(listOfSentences):
     for q_num in range(1):
         if(len(choiceList) >= 4 and len(questionList) >= 1):
             orderDict[q_num]["sentence"] = questionList[0]
-            ans = choiceList[0]
-            orderDict[q_num]["distractor"] = random.shuffle(choiceList[:4])
-            orderDict[q_num]["answer"] = choiceList.index(ans) + 1
+            tmp_list = choiceList[:4]
+            random.shuffle(tmp_list)
+            orderDict[q_num]["distractor"] = tmp_list
+            orderDict[q_num]["answer"] = tmp_list.index(choiceList[0]) + 1
             questionList = questionList[4:]
             choiceList = choiceList[4:]
         else:
@@ -169,8 +170,8 @@ def multipleChoiceHtml(questionDict,html,proNum,sliceList,vocab):
             html.write("\t\t\t<h4>")
             for sen in sent.split():
                 if(sen in vocab):
-                    lemma_word,level,pos_tag = vocab[sen]
-                    html.write('<span data-word="' + lemma_word + '" data-level="' + level + '" data-pos="' + pos_tag +
+                    lemma_word, dataWord,level, pos_tag = vocab[sen]
+                    html.write('<span data-lemma="'+lemma_word+'" data-word="' + dataWord + '" data-level="' + level + '" data-pos="' + pos_tag +
                                '">'+sen+"</span>")
                 else:
                     html.write('<span>'+sen+"</span>")
@@ -181,14 +182,15 @@ def multipleChoiceHtml(questionDict,html,proNum,sliceList,vocab):
                 html.write("\t\t\t<input type =\"radio\" name =\"question" + str(pro_num) + "\" "
               "id = "+pi+" value=\""+(str(i+1))+"\">\n")
                 if(choices[i] in vocab):
-                    lemma_word,level,pos_tag = vocab[choices[i]]
+                    lemma_word, dataWord,level, pos_tag = vocab[choices[i]]
                     html.write("\t\t\t<label for=" + pi + " class = ans" + str(pro_num) + ""
-                    " data-word=\"" + lemma_word + "\" data-level=\"" + level +
+                    ' data-lemma="'+lemma_word+'" data-word="' + dataWord + '" data-level="' + level +
                     "\" data-pos=\"" + pos_tag + "\" >" + choices[i] + "</label><br>\n")
                 else:
                     html.write("\t\t\t<label for="+pi+" class = ans"+str(pro_num)+">"+choices[i]+"</label><br>\n")
             html.write("\t\t</li>\n")
     return pro_num
+
 def clozeHtml(questionDict,html,proNum,sliceList,vocab,pure_text):
     if(questionDict):
         num = sliceList["cloze"]
@@ -206,8 +208,9 @@ def clozeHtml(questionDict,html,proNum,sliceList,vocab,pure_text):
             html.write("<h4>")
             for sen in sent.split():
                 if (sen in vocab):
-                    lemma_word, level, pos_tag = vocab[sen]
-                    html.write('<span data-word="' + lemma_word + '" data-level="' + level + '" data-pos="' + pos_tag +
+                    lemma_word, dataWord,level, pos_tag = vocab[sen]
+                    html.write('<span data-lemma="'+lemma_word+'" data-word="' + dataWord
+                               + '" data-level="' + level + '" data-pos="' + pos_tag +
                                '">' + sen + "</span>")
                 else:
                     html.write('<span>' + sen + "</span>")
@@ -216,10 +219,11 @@ def clozeHtml(questionDict,html,proNum,sliceList,vocab,pure_text):
             html.write("\n\t\t\t<br><textarea  rows = \"1\" cols = \"20\" align = \"left\" "
                        "name = cloze" + str(index) + " id = clozeA" + str(index) + "></textarea>\n")
             if (key in vocab):
-                lemma_word, level, pos_tag = vocab[key]
+                lemma_word, dataWord, level, pos_tag = vocab[key]
                 html.write(
-                    "<span><div data-word=\"" + lemma_word + "\" data-level=\"" + level + "\" data-pos=\"" + pos_tag + "\" id = clozeAns"
-                    + str(index) + " class = clozeAns" + str(index) + " name = clozeAns" + str(
+                    '<span><div data-lemma="'+lemma_word+'" data-word="' + dataWord +
+                    '" data-level="' + level + '" data-pos="' + pos_tag
+                    + '" id = clozeAns'+ str(index) + " class = clozeAns" + str(index) + " name = clozeAns" + str(
                         index) + " style = \"display:none;\">" + str(key) + "</div></span><br>\n")
             else:
                 html.write(
@@ -230,6 +234,7 @@ def clozeHtml(questionDict,html,proNum,sliceList,vocab,pure_text):
         html.write("\t\t</li>\n")
 
     return
+
 def rebuildSent(sent,key):
     if("_" in sent and "_ " in sent):
         indStart = sent.index("_")
@@ -281,7 +286,7 @@ def generateHtml(questionDict,orderDict,proNum,sliceList,vocab,pure_text):
 # </html>""")
     html.close()
     return
-def generateJs(questionDict,orderDict,cat,sliceList):
+def generateJs3(questionDict,orderDict,cat,sliceList):
     text = """tot = answers.length;
     var valList = [];
 function getCheckedValue( radioName ){
@@ -390,17 +395,13 @@ function returnScore(){
     L = sliceList["cloze"]
     # js = open("./static/js/index2.js", "w", encoding='utf-8')
     js = open("./templates/index2.html", "a", encoding='utf-8')
+    ans = [item for item in questionDict]
+    # print("var clozeAnswers = " + str(ans[:L]))
     js.write("<script>\n")
-    js.write("var clozeAnswers = [")
-    for index,item in enumerate(questionDict):
-        if (index > 0 and questionDict[item]['sentence'] != ""):
-            js.write(",")
-        if(index == L-1): break
-        js.write("\""+str(item)+"\"")
-    if(questionDict[item]['sentence'] != ""):
-        js.write("\"" + str(item) + "\"],\n")
+    if(len(ans)>=L):
+        js.write("var clozeAnswers = "+str(ans[:L])+",\n")
     else:
-        js.write("],\n")
+        js.write("var clozeAnswers =[\"\"]" +",\n")
     js.write("""clozeTot = clozeAnswers.length;
 var clozeValList = [];\n""")
     js.write("var answers = [")
@@ -413,6 +414,131 @@ var clozeValList = [];\n""")
         multipleChoiceJs(orderDict, js,cat,0)
     js.write(text)
     js.write("</script>\n")
+    js.close()
+    return
+def generateJs(questionDict,orderDict,cat,sliceList):
+    text = """tot = answers.length;
+    var valList = [];
+function getCheckedValue( radioName ){
+    var radios = document.getElementsByName( radioName ); // Get radio group by-name
+    for(var y=0; y<radios.length; y++){
+      radios[y].disabled = true;
+      if(radios[y].checked){
+        checkedValue = radios[y].value; // return the checked value
+       }
+    }
+    return checkedValue; // return the checked value
+}
+function getTypedValue( textName ){
+    var text = document.getElementsByName( textName ); 
+    for(var y=0; y<text.length; y++){
+      enterText = text[y].value; 
+    }
+    return enterText; 
+}
+function Clear(){
+  var radios;
+    for (var i=0; i<tot; i++){
+      radioName = "question"+i;  
+       radios = document.getElementsByName(radioName); 
+    for(var y=0; y<radios.length; y++){
+      radios[y].disabled = false;
+    }
+   }
+}
+function getScore(){
+  var score = 0;
+  for (var i=0; i<tot; i++){
+      Checkedval = getCheckedValue("question"+i);
+    if(Checkedval===answers[i]){   
+       score += 1; // increment only 
+       valList[i] = Checkedval;
+    }
+    else{
+        valList[i] = Checkedval;     
+    }
+  }
+  return score;
+}
+function getClozeScore(){
+  var score = 0;
+  for (var i=0; i<clozeTot; i++){
+      enterText = getTypedValue("cloze"+i);
+    if(enterText === clozeAnswers[i]){   
+       score += 1; // increment only 
+       clozeValList[i] = 1;
+    }
+    else{
+        clozeValList[i] = 0;     
+    }
+  }
+  return score;
+}
+function returnScore2(){
+  score = getClozeScore();
+   // document.getElementById("demo").innerHTML = score;
+  // alert("Your score is "+ score +"/"+ tot);
+    var i;
+    for (i = 0; i < clozeTot; i++) {
+         var nam = document.getElementById('clozeA'+i)
+         // var nam = document.querySelectorAll("clozeA"+i);
+        if(clozeValList[i] == 1){
+        nam.style.backgroundColor= "#0C0";
+        nam.style.color= "white";
+        }
+      else{
+         var blockName = document.getElementById('clozeAns'+i)
+        blockName.style.display = "block";
+        blockName.style.fontWeight = "bold";
+        nam.style.backgroundColor= "red";
+        nam.style.color= "white";
+      }      
+    }
+    var colr = document.getElementsByClassName("tab-content");
+    colr[0].style.opacity =  1;
+    // document.getElementById("demo").innerHTML = score;
+    score1 = returnScore();
+    alert("Your score is "+ (score + score1) +"/"+ (tot+clozeTot));
+    // document.getElementById("demo").innerHTML = score;
+}
+function returnScore(){
+  score1 = getScore();
+  // alert("Your score is "+ score +"/"+ tot);
+    var i;
+    for (i = 0; i < tot; i++) {
+          var y = document.querySelectorAll(".ans"+i);
+         //document.getElementById("demo").innerHTML = valList[0];
+         //document.getElementById("testing").innerHTML = answers[0];
+        if(valList[i] !== answers[i]){
+           y[valList[i]-1].style.backgroundColor = "red"; 
+           y[answers[i]-1].style.backgroundColor = "#0C0";
+           y[answers[i]-1].style.color = "white"; 
+        }
+      else{
+          y[answers[i]-1].style.backgroundColor = "#0C0";         
+      }      
+    } 
+  return score1
+}
+    """
+    L = sliceList["cloze"]
+    js = open("./templates/index2.html", "a", encoding='utf-8')
+    ans = [item for item in questionDict]
+    js.write("<script>\n")
+    if(len(ans)>=L):
+        js.write("var clozeAnswers = "+str(ans[:L])+",\n")
+    else:
+        js.write("var clozeAnswers =[\"\"]" +",\n")
+    js.write("""clozeTot = clozeAnswers.length;\nvar clozeValList = [];\n""")
+    if(questionDict):
+        mcq_ans = [str(questionDict[item]["answer"]) for item in questionDict]
+        if(len(orderDict) > 0):
+            order_ans = [str(orderDict[item]["answer"]) for item in orderDict]
+            js.write("var answers = " + str(mcq_ans[L:])[:-1]+", "+str(order_ans)[1:]+",\n")
+        else:
+            js.write("var answers = " + str(mcq_ans[L:])+",\n")
+    js.write(text)
+    js.write("\n</script>\n")
     js.close()
     return
 def mcqDistractor(wordL,disDB):
@@ -449,6 +575,7 @@ def generateWeb(questionDict,orderDict,pro_num,category,vocab,pure_text):
     sliceList = {"cloze": 2}
     generateHtml(questionDict,orderDict,pro_num,sliceList,vocab,pure_text)  #generate html code
     generateJs(questionDict,orderDict,category,sliceList)   #generate javascript code
+    # generateJs2(questionDict,orderDict,category,sliceList)   #generate javascript code
     return
 def merge_two_dicts(x, y):
     """Given two dicts, merge them into a new dict as a shallow copy."""

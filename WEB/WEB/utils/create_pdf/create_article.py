@@ -120,19 +120,32 @@ def transformFormat(content, youtube, verb, noun, adj):
                 pos_num += 1
                 continue  # --
             pos_tag = ''
-            if pos.startswith('VB') and lemma_word in verb:
+            dataWord = ''
+            if pos.startswith('VB'):
                 pos_tag = 'V'
-            elif pos.startswith('NN') and lemma_word in noun:
+                if lemma_word in verb:
+                    dataWord = lemma_word
+                else:
+                    dataWord = wordnet(lemma_word, pos_tag, verb)
+            elif pos.startswith('NN'):
                 pos_tag = 'N'
-            elif pos.startswith('J') and lemma_word in adj:
+                if lemma_word in noun:
+                    dataWord = lemma_word
+                else:
+                    dataWord = wordnet(lemma_word, pos_tag, noun)
+            elif pos.startswith('J'):
                 pos_tag = 'ADJ'
+                if lemma_word in adj:
+                    dataWord = lemma_word
+                else:
+                    dataWord = wordnet(lemma_word, pos_tag, adj)
 
             if lemma_word in A_word:
                 level = 'A'
             elif lemma_word in B_word:
                 level = 'B'
-            if pos_tag:
-                vocab_dict[clean_word] = lemma_word, level, pos_tag
+            if dataWord:
+                vocab_dict[clean_word] = lemma_word, dataWord, level, pos_tag
                 bf_tag = bb_tag = ""
                 r = re.findall('(?P<f>\W)' + clean_word + '(?P<b>\W)', sent)  # cookies
                 for f, b in r:
