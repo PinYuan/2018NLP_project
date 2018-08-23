@@ -1,28 +1,27 @@
-from flask import Flask, render_template, request, url_for, send_file, jsonify,redirect
+from flask import Flask, render_template, request, url_for, send_file, jsonify
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
 import os
+import requests
 from collections import defaultdict
 import json
 
 from utils.extract import *
-# from utils.create_pdf import *
-import requests
-#from readability.readability import Document
+from utils.create_pdf import *
 from readability import Document
 
 from utils.create_pdf.create_article import *
-from utils.GenerateMCQ import *
+from utils.GenerateMCQ import *        # import quiz generation
 
 import youtube_dl
-#dictWord = eval(open('utils/data/autoFindPattern/wordPG.txt', 'r',encoding="utf-8").read())
-#phraseV = eval(open('utils/data/autoFindPattern/phrase(V).txt', 'r',encoding="utf-8").read())
+
 dictWord = eval(open('utils/data/autoFindPattern/wordPG.txt', 'r').read())
 phraseV = eval(open('utils/data/autoFindPattern/phrase(V).txt', 'r').read())
+
 # read translation
-#TRANS = eval(open('utils/data/final TRANS.txt', 'r',encoding="utf-8").read()) # tran[pos][word] = [translation...]
 TRANS = eval(open('utils/data/final TRANS.txt', 'r').read()) # tran[pos][word] = [translation...]
+
 app = Flask(__name__ )
 import datetime
 # egp = load_egp() # grammar pattern
@@ -35,6 +34,10 @@ def index():
     return render_template('index.html')
     #return render_template('format.html', title=title, publish_date=publish_date, content=new, user_level=user_level, grade=grade)
 
+def store(*values):  # store value from handle_data() and pass to quiz() 
+    store.values = values or store.values
+    return store.values    
+   
 @app.route('/handle_data', methods=['POST', 'GET'])
 def handle_data():
     def cleancap(raw_cap):
@@ -57,7 +60,7 @@ def handle_data():
         for idx in range(len(cap)):
             if idx not in tmp: final.append(cap[idx])
         return '\n'.join(final)
-
+    
     user_level = request.form['user_level']
     title = ''
     publish_date = ''
@@ -108,76 +111,24 @@ def handle_data():
                          set(dictWord['V'].keys()), set(dictWord['N'].keys()), set(dictWord['ADJ'].keys()))
     store(pure_text,vocab_dict,user_level)
     return render_template('format.html', title=title, publish_date=publish_date, \
-                           user_level=user_level, content=new)
-
-
-def store(*values):
-    store.values = values or store.values
-    return store.values
-# @app.route('/index2', methods=['POST', 'GET'])
-# def quiz():
-#     return render_template('index2.html')
+                           user_level=user_level, content=new) 
 
 @app.route('/index2', methods=['POST', 'GET'])
 def quiz():
-    pure_text,vocab_dict,user_level = store()
-    tmpDict = extractVocList2(vocab_dict,user_level,10)  #extract vocabulary list
+    pure_text,vocab_dict,user_level = store()  
+    tmpDict = extractVocList2(vocab_dict,user_level,10)  #extract vocabulary list 
     o = shuffle_vocab_dict(tmpDict,10)  # randomly pick up n vocabularies
-    # o = tmpDict
-    questionDict, orderDict, pro_num, category = generateMCQ(o, 0,user_level,pure_text)
+    questionDict, orderDict, pro_num, category = generateMCQ(o, 0, user_level,pure_text)
     type_ = "text"
     q = merge_two_dicts(questionDict,orderDict)
     vocab = transformFormat(q, type_ == 'youtube', \
                             set(dictWord['V'].keys()), set(dictWord['N'].keys()), set(dictWord['ADJ'].keys()))
-#     con = """ 	<ul>
-# 		<li>
-# 			<form><h4>
-# <span>One</span><span>would</span><span data-word="expect" data-level="B" data-pos="V">expect</span><span data-word="such" data-level="A" data-pos="ADJ">such</span><span>a</span><span data-word="consensus" data-level="C" data-pos="N">consensus</span><span>to</span><span data-word="be" data-level="A" data-pos="V">be</span><span data-word="back" data-level="A" data-pos="V">backed</span><span>up</span><span>by</span><span>an</span><span>im_____e</span><span data-word="array" data-level="C" data-pos="N">array</span><span>of</span><span data-word="evidence" data-level="B" data-pos="N">evidence</span><span>.</span>
-# 			<br><textarea  rows = "1" cols = "20" align = "left" name = cloze0 id = clozeA0></textarea>
-# <span><div data-word="impressive" data-level="B" data-pos="ADJ" id = clozeAns0 class = clozeAns0 name = clozeAns0 style = "display:none;">impressive</div></span><br>
-# 			</h4></form>
-# 		</li>
-# 		<li>
-# 			<h4><span>I</span><span data-word="have" data-level="A" data-pos="V">have</span><span data-word="learn" data-level="A" data-pos="V">learned</span><span>a</span><span data-word="great" data-level="A" data-pos="ADJ">great</span><span data-word="deal" data-level="B" data-pos="V">deal</span><span>from</span><span>all</span><span>that</span><span>I</span><span data-word="have" data-level="A" data-pos="V">have</span><span data-word="hear" data-level="A" data-pos="V">heard</span><span>in</span><span>the</span><span>_____</span><span data-word="few" data-level="A" data-pos="ADJ">few</span><span data-word="day" data-level="A" data-pos="N">days</span><span>.</span></h4>
-# 			<input type ="radio" name ="question0" id = pickup-1 value="1">
-# 			<label for=pickup-1 class = ans0>last</label><br>
-# 			<input type ="radio" name ="question0" id = pickup-2 value="2">
-# 			<label for=pickup-2 class = ans0 data-word="high" data-level="A" data-pos="ADJ" >high</label><br>
-# 			<input type ="radio" name ="question0" id = pickup-3 value="3">
-# 			<label for=pickup-3 class = ans0>most</label><br>
-# 			<input type ="radio" name ="question0" id = pickup-4 value="4">
-# 			<label for=pickup-4 class = ans0 data-word="much" data-level="A" data-pos="ADJ" >much</label><br>
-# 		</li>
-# 		<li>
-# 			<h4><span>And</span><span>it</span><span>certainly</span><span data-word="take" data-level="A" data-pos="V">takes</span><span>an</span><span data-word="expert" data-level="B" data-pos="N">expert</span><span>in</span><span data-word="road" data-level="A" data-pos="N">roads</span><span>to</span><span data-word="deal" data-level="B" data-pos="V">deal</span><span>with</span><span>this</span><span data-word="country" data-level="A" data-pos="N">country</span><span>'s</span><span>_____</span><span data-word="topography" data-level="C" data-pos="N">topography</span><span>and</span><span data-word="climate" data-level="B" data-pos="N">climate</span><span>.</span></h4>
-# 			<input type ="radio" name ="question1" id = pickup-5 value="1">
-# 			<label for=pickup-5 class = ans1>tricky</label><br>
-# 			<input type ="radio" name ="question1" id = pickup-6 value="2">
-# 			<label for=pickup-6 class = ans1 data-word="varied" data-level="B" data-pos="ADJ" >varied</label><br>
-# 			<input type ="radio" name ="question1" id = pickup-7 value="3">
-# 			<label for=pickup-7 class = ans1 data-word="squint" data-level="C" data-pos="N" >squint</label><br>
-# 			<input type ="radio" name ="question1" id = pickup-8 value="4">
-# 			<label for=pickup-8 class = ans1 data-word="racist" data-level="C" data-pos="N" >racist</label><br>
-# 		</li>
-# 		<li>
-# 			<h4><span>Instead</span><span>it</span><span data-word="be" data-level="A" data-pos="V">was</span><span>the</span><span>Colombians</span><span>that</span><span data-word="double" data-level="A" data-pos="V">doubled</span><span>their</span><span data-word="lead" data-level="B" data-pos="N">lead</span><span>with</span><span>70</span><span data-word="minute" data-level="A" data-pos="N">minutes</span><span>on</span><span>the</span><span>clock,</span></h4>
-# 			<input type ="radio" name ="question2" id = pickup-9 value="1">
-# 			<label for=pickup-9 class = ans2> Japan has since been nothing if not consistent</label><br>
-# 			<input type ="radio" name ="question2" id = pickup-10 value="2">
-# 			<label for=pickup-10 class = ans2> Radamel Falcao nonchalantly sliding it past Wojciech Szczęsny to score his first ever World Cup goal.</label><br>
-# 			<input type ="radio" name ="question2" id = pickup-11 value="3">
-# 			<label for=pickup-11 class = ans2> Poland's journey at the Russia 2018 has already effectively come to an end.</label><br>
-# 			<input type ="radio" name ="question2" id = pickup-12 value="4">
-# 			<label for=pickup-12 class = ans2> who was carried off on a stretcher and replaced by Mateus Uribe after 32 minutes.</label><br>
-# 		</li>
-# 	</ul>
-# 	<button onclick="returnScore2()">Submit</button>
-#     """
     generateWeb(questionDict,orderDict,pro_num,category,vocab,pure_text)  # generate web file(html+js)
-    file = open("./templates/index2.html", "r", encoding="utf-8")
+    file = open("./templates/index2.html", "r", encoding="utf-8")  
     con = file.read() # read html and js file and write into format2.html
     return render_template('format2.html', title="quiz", publish_date="2018.8.11", \
-                           user_level="B", content=con)
+                           user_level="B", content=con)                        
+                           
 @app.route('/download/<filename>', methods=['GET'])
 def return_reformatted(filename):
     try:
@@ -190,6 +141,7 @@ def ajax_request():
     word = request.form['word'].lower() if request.form['pos'] != 'x' else request.form['word'].split()[0].lower()  
     poses = ['V', 'N', 'ADJ'] if len(request.form['word'].split())==1 else [p.upper() for p in request.form['word'].split()[1:]]
     
+    finalWord = word
     # patternTable[pos] = [(pat, colls, (en, ch, source)), ...] 
     patternTable = defaultdict(lambda: [])
     # phraseTable[pos][phrase] = [pat, (colls, (en, ch, source)), ...] 
@@ -216,12 +168,39 @@ def ajax_request():
                         trans['phrase'][phrase] = TRANS['phrase'][pos][phrase]
                     else:
                         trans['phrase'][phrase] = []
-
-        if word in set(TRANS['pat'][pos].keys()):
-            trans['pat'][pos] = TRANS['pat'][pos][word]
+        if finalWord in set(TRANS['pat'][pos].keys()):
+            trans['pat'][pos] = TRANS['pat'][pos][finalWord]
         else:
             trans['pat'][pos] = []
-    return jsonify(patternTable=patternTable, \
+    
+    if not patternTable.keys():
+        for pos in poses:
+            if finalWord == word or not finalWord: finalWord = wordnet(word, pos, set(dictWord[pos].keys()))
+            if finalWord and finalWord != word:
+                if finalWord in dictWord[pos].keys():
+                    for pat, colls, examp in dictWord[pos][finalWord][:5]:
+                        patternTable[pos] += [(pat, ', '.join(colls[:3]), examp)]
+                        
+                if pos == 'V' and finalWord in phraseV.keys():
+                    # 前面以過濾過phrase至多3個, pat已用std過濾
+                    phraseOrder = sorted(phraseV[finalWord].keys(), key=lambda x: -int(x.rsplit('%', 1)[1]))
+                    for phrase in phraseOrder:
+                        for pat, colls, examp in phraseV[finalWord][phrase]:
+                            phraseTable[pos][phrase] += [(pat, ', '.join(colls[:3]), examp)]
+                            phrase = phrase.split('%')[0]
+                            if phrase in TRANS['phrase'][pos].keys():
+                                trans['phrase'][phrase] = TRANS['phrase'][pos][phrase]
+                            else:
+                                trans['phrase'][phrase] = []
+                if finalWord in set(TRANS['pat'][pos].keys()):
+                    trans['pat'][pos] = TRANS['pat'][pos][finalWord]
+                else:
+                    trans['pat'][pos] = []
+                        
+                        
+                        
+    return jsonify(finalWord=finalWord, \
+                   patternTable=patternTable, \
                    phraseTable=phraseTable, phraseOrder=phraseOrder, \
                    trans=trans)
 
@@ -240,5 +219,5 @@ def dated_url_for(endpoint, **values):
     return url_for(endpoint, **values)   
 
 if __name__ == '__main__':
-    #app.run(debug=False)
+    # app.run(debug=False)
     app.run(host='0.0.0.0', port=int("5487"), debug=False)
