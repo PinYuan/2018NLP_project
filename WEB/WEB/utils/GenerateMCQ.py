@@ -421,6 +421,7 @@ def generateJs(questionDict,orderDict,cat,sliceList):
     var valList = [];
 function getCheckedValue( radioName ){
     var radios = document.getElementsByName( radioName ); // Get radio group by-name
+    checkedValue = -1;
     for(var y=0; y<radios.length; y++){
       radios[y].disabled = true;
       if(radios[y].checked){
@@ -509,7 +510,7 @@ function returnScore(){
           var y = document.querySelectorAll(".ans"+i);
          //document.getElementById("demo").innerHTML = valList[0];
          //document.getElementById("testing").innerHTML = answers[0];
-        if(valList[i] !== answers[i]){
+        if(valList[i] !== answers[i] && valList[i]!=-1){
            y[valList[i]-1].style.backgroundColor = "red"; 
            y[answers[i]-1].style.backgroundColor = "#0C0";
            y[answers[i]-1].style.color = "white"; 
