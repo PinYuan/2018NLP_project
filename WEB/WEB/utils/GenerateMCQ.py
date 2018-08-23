@@ -94,15 +94,15 @@ def readDatabase():
         wordL, c1, c2, c3 = line.strip().split()
         disDB[wordL] = c1, c2, c3
     return gdexDB, disDB
-def mcqGDEX(wordL,word_pos,gdexDB,questionDict):
+def mcqGDEX(wordL,word_pos,gdexDB):
     if (wordL in gdexDB):  # if word in database, take it.
         if(word_pos in gdexDB[wordL]):
-            questionDict[wordL]["sentence"] = gdexDB[wordL][word_pos][1:-1]  #delete bracket
+            tmp_sentence = gdexDB[wordL][word_pos][1:-1]  #delete bracket
         else:
             return ""
     else:  # if word is not in database, ignore it
         return ""
-    return questionDict[wordL]["sentence"]
+    return tmp_sentence
 def remove_punc(s):
     indices = [i for i, x in enumerate(s) if x == "\\"]  # replace ' punctuation
     for ind in indices:
@@ -561,14 +561,15 @@ def generateMCQ(vocList,pro_num,level,pure_text):
     for word in vocList:
         wordL = vocList[word]["lemma"]
         word_pos =  get_spacy_pos(vocList[word]['pos'])
-        tmp_sentence = mcqGDEX(wordL, word_pos, gdexDB, questionDict) #generate GDEX
+        tmp_sentence = mcqGDEX(wordL, word_pos, gdexDB) #generate GDEX
         tmp_distractor,tmp_ans = mcqDistractor(wordL, disDB) # generate distractor
-        if(tmp_sentence!="" and tmp_distractor!="" and tmp_ans!=-1):
+        if(tmp_sentence!="" and len(tmp_distractor) == 4 and tmp_ans!=-1):
             questionDict[wordL]["sentence"] = tmp_sentence
             questionDict[wordL]["distractor"] = tmp_distractor
             questionDict[wordL]["answer"] = tmp_ans
         else:
             continue
+
     orderDict = generateOrderQ(pure_text)  #generate order question
     category = 2
     return questionDict,orderDict,pro_num,category  #return question and choices
