@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, url_for, send_file, jsonify
-from selenium import webdriver
 from bs4 import BeautifulSoup
 
 import os
