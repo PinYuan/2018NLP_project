@@ -16,8 +16,8 @@ from utils.GenerateMCQ import *        # import quiz generation
 
 import youtube_dl
 
-dictWord = eval(open('utils/data/autoFindPattern/wordPG.txt', 'r').read())
-phraseV = eval(open('utils/data/autoFindPattern/phrase(V).txt', 'r').read())
+dictWord = eval(open('utils/data/autoFindPattern/GPs.txt', 'r').read())
+phraseV = eval(open('utils/data/autoFindPattern/phrase.txt', 'r').read())
 
 # read translation
 TRANS = eval(open('utils/data/final TRANS.txt', 'r').read()) # tran[pos][word] = [translation...]
@@ -139,7 +139,13 @@ def return_reformatted(filename):
 @app.route('/ajax', methods = ['POST'])
 def ajax_request():
     word = request.form['word'].lower() if request.form['pos'] != 'x' else request.form['word'].split()[0].lower()  
-    poses = ['V', 'N', 'ADJ'] if len(request.form['word'].split())==1 else [p.upper() for p in request.form['word'].split()[1:]]
+    
+    if request.form['pos'] != 'x': # click
+        poses = [request.form['pos']]
+    elif len(request.form['word'].split()) == 1: # search
+        poses = ['V', 'N', 'ADJ']
+    else:
+        poses = [p.upper() for p in request.form['word'].split()[1:]]
     
     finalWord = word
     # patternTable[pos] = [(pat, colls, (en, ch, source)), ...] 
