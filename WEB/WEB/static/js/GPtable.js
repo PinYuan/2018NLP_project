@@ -78,7 +78,7 @@ function whatClicked(evt) {
                 
                 // pattern
 
-                if (word != evt.target.getAttribute("data-lemma").toUpperCase()) {
+                if (response.change) {
                     patTable += '<p>Since there is no information about "' + evt.target.getAttribute("data-lemma") + '", we show a synonym for this word.</p>';
                 }
                 patTable += '<h2>' + word + '<span data-pos="' + pos + '"></span>'
@@ -89,7 +89,7 @@ function whatClicked(evt) {
 
                 // phrase
                 
-                if (word != evt.target.getAttribute("data-lemma").toUpperCase()) {
+                if (response.change) {
                     phrTable += '<p>Since there is no information about "' + evt.target.getAttribute("data-lemma") + '", we show a synonym for this word.</p>';
                 }
                 if (response.phraseOrder.length > 0) {
@@ -132,7 +132,7 @@ function search() {
 
                 for (let pos of ['V', 'N', 'ADJ']) {
                     if (pos in response.patternTable === false) continue
-                    if (word != document.getElementById("search_word").value.toUpperCase()) {
+                    if (response.change) {
                         patTable += '<p>Since there is no information about "' + document.getElementById("search_word").value + '", we show a synonym for this word.</p>';
                     }
                     patTable += '<h2>' + word + '<span data-pos="' + pos + '"></span>'
@@ -150,7 +150,7 @@ function search() {
                 if (response.phraseOrder.length > 0) {
                     for (phraseIndex in response.phraseOrder) {
                         var phrase = response.phraseOrder[phraseIndex]
-                        if (word != document.getElementById("search_word").value.toUpperCase()) {
+                        if (response.change) {
                             phrTable += '<p>Since there is no information about "' + document.getElementById("search_word").value + '", we show a synonym for this word.</p>';
                         }
                         phrTable += '<h2>' + phrase.split('%')[0] /*+ '<span data-pos="' + pos + '"></span>'*/
