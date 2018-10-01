@@ -9,3 +9,4 @@ WEB/WEB/utils/geniatagger-3.0.2/
 WEB/WEB/utils/*.txt
 WEB/WEB/utils/data/
 *.pyc
+.myenv/

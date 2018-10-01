@@ -115,7 +115,6 @@ function whatClicked(evt) {
     //var postVars = 'word='+evt.target.firstChild.nodeValue+'&pos=V'
 
     xmlhttp.send(postVars);
-
 }
 
 function search() {
@@ -171,5 +170,60 @@ function search() {
     var postVars = 'word=' + document.getElementById("search_word").value + '&lemma=x&pos=x'
 
     xmlhttp.send(postVars);
+}
 
+function showFirstWordTable() {
+    var span= document.getElementById('text-article').getElementsByTagName("span")[0]
+    var click= new Event('click');
+    span.dispatchEvent(click);
+    
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(xmlhttp.responseText)
+            var firstWord = document.getElementById('text-article').getElementsByTagName("span")[0]
+            var word = firstWord.getAttribute("data-word").toUpperCase()
+            var patTable = ''
+            var phrTable = ''
+
+            if (word != null) {
+                var pos = firstWord.getAttribute("data-pos")
+                
+                // pattern
+
+                if (response.change) {
+                    patTable += '<p>Since there is no information about "' + firstWord.getAttribute("data-lemma") + '", we show a synonym for this word.</p>';
+                }
+                patTable += '<h2>' + word + '<span data-pos="' + pos + '"></span>'
+                patTable += genTrans(response.trans['pat'][pos])
+                patTable += genTable(word.toLowerCase(), response.patternTable[pos])
+                document.getElementById("patTable").innerHTML = patTable;
+                document.getElementById("patTable").style.height = "auto";
+
+                // phrase
+                
+                if (response.change) {
+                    phrTable += '<p>Since there is no information about "' + firstWord.getAttribute("data-lemma") + '", we show a synonym for this word.</p>';
+                }
+                if (response.phraseOrder.length > 0) {
+                    for (phraseIndex in response.phraseOrder) {
+                        var phrase = response.phraseOrder[phraseIndex]
+                        phrTable += '<h2>' + phrase.split('%')[0] /*+ '<span data-pos="' + pos + '"></span>'*/
+                        phrTable += genTrans(response.trans['phrase'][phrase.split('%')[0]])
+                        phrTable += genTable(word.toLowerCase(), response.phraseTable['V'][phrase])
+                    }
+                    document.getElementById("phrTable").innerHTML = phrTable;
+                    document.getElementById("phrTable").style.height = "auto";
+                } else {
+                    phrTable += '<table class="table" style="display:none;"> <thead><tr><th>pattern</th><th style="text-align: center;">percent</th><th>col.</th></tr></thead><tbody></tbody></table>'
+                    document.getElementById("phrTable").innerHTML = phrTable;
+                }
+            }
+        }
+    };
+    xmlhttp.open('POST', '/ajax')
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    var firstWord = document.getElementById('text-article').getElementsByTagName("span")[0]
+    var postVars = 'word=' + firstWord.getAttribute("data-word") + '&lemma=' + firstWord.getAttribute("data-lemma") + '&pos=' + firstWord.getAttribute("data-pos")
+    xmlhttp.send(postVars);
 }

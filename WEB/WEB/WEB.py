@@ -23,7 +23,7 @@ TRANS = eval(open('utils/data/final TRANS.txt', 'r').read()) # tran[pos][word] =
 
 app = Flask(__name__ )
 import datetime
-# egp = load_egp() # grammar pattern
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 
 if not os.path.exists('download'):
     os.makedirs('download')
@@ -95,7 +95,7 @@ def handle_data():
             title = BeautifulSoup(r.text, 'html.parser').find('title').text
             publish_date = BeautifulSoup(r.text, 'html.parser').find('meta', itemprop="datePublished")['content']
     elif text.startswith('http://') or text.startswith('https://'):
-        response = requests.get(text)
+        response = requests.get(text, headers=headers)
         doc = Document(remove_sometag(response.text))
         title = doc.short_title()
         publish_date = getPublishDate(response.content.decode('UTF-8'))
