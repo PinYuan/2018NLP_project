@@ -24,7 +24,7 @@ def wordnet(word_, pos, posSet):
 
 def create_article(title, user_level, content, youtube, verb, noun, adj):
     new_content = []
-    dangerous_word = set(['word', 'span', 'data', 'pos', 'datum', 'level', 'lemma']) # prevent replace loop
+    dangerous_word = set(['word', 'span', 'data', 'pos', 'datum', 'level', 'lemma', 'strong']) # prevent replace loop
     vocab_dict = defaultdict(lambda :dict())
     pure_text = []
     for c in content:
