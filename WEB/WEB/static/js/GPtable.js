@@ -36,8 +36,8 @@ function genTable(word, patterns) {
                     newcoll.push(p)
                 else {
                     if (NER.has(coll[0])) {
-                        if (coll[0] == '&lt;GPE&gt;') newcoll.push('<span class="NER" title="EX. US, UK, Scotland, Chicago">GPE</span>')
-                        else if (coll[0] == '&lt;NORP&gt;') newcoll.push('<span class="NER" title="EX. Americans, Asians, Canadians, Italian">NORP</span>')
+                        if (coll[0] == '&lt;GPE&gt;') newcoll.push('<span class="NER" title="(geopolitical entity) EX. US, UK, Scotland, Chicago">GPE</span>')
+                        else if (coll[0] == '&lt;NORP&gt;') newcoll.push('<span class="NER" title="(nationalities or religious or political groups) EX. Americans, Asians, Canadians, Italian">NORP</span>')
                         else if (coll[0] == '&lt;TIME&gt;') newcoll.push('<span class="NER" title="EX. year, month, date, minute">TIME</span>')
                         else if (coll[0] == '&lt;MONEY&gt;') newcoll.push('<span class="NER" title="EX. billion, million, dollar, cent">MONEY</span>')
                     } else newcoll.push(coll[0])
