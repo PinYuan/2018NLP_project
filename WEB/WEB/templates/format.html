@@ -291,16 +291,26 @@
                     <a type="button" class="btn btn-primary" href="#" target="blank">Quiz</a>
                     <a type="button" class="btn btn-primary" href="#" target="blank">Anki-word flash card</a>
                 </div>-->
-            <form action="/" method="post">
-                <button type="submit" class="btn btn-default">Return</button>
+            <form method="post">
+                <button type="submit" class="btn btn-default" formAction="/"  >Return</button>
+                <button onclick="quizGeneration()" id="quiz" class="btn btn-primary" formAction="/index2" >Quiz</button>
             </form>
+            <!--
 
+            <form action="/" method="post">
+                <button type="submit" class="btn btn-default" formAction="/" >Return</button>
+                <button onclick="quizGeneration()" id="quiz" class="btn btn-primary">Quiz</button>
+            </form>
+            <div>
+                <button onclick="quizGeneration()" id="quiz" class="btn btn-primary">Quiz</button>
+            </div>
+            -->
             <div id="level1item1" style="display: none;">
                 <button onclick="topFunction()" id="toTop" title="Go to top" class="subbtn">TOP</button>
                 <button onclick="labelWord('A')" id="wordLevelA" class="subbtn" data-check="false">A</button>
                 <button onclick="labelWord('B')" id="wordLevelB" class="subbtn" data-check="false">B</button>
                 <button onclick="labelWord('C')" id="wordLevelC" class="subbtn" data-check="false">C</button>
-                <button onclick="quizGeneration()" id="quiz" class="subbtn" data-check="false">Quiz</button>
+                <!--<button onclick="quizGeneration()" id="quiz" class="subbtn" data-check="false">Quiz</button> -->
             </div>
             <button id="functionbtn" onclick="showHide(1);">+</button>
             
