@@ -52,10 +52,10 @@ function genTable(word, patterns) {
         table += '<tr><td style="color: indianred;">' + pat + '</td><td style="text-align: center;">' + percent + "%</td><td>" + newcolls + "</td></tr>"
         if (en != "") table += '<tr><td style="background: #f2f2f2; " colspan=3>' + en
         if (ch != "") table += "<br>" + ch + ' '
-        if (source == "cam") table += "<a href='https://dictionary.cambridge.org/zht/搜索/english-chinese-traditional/direct/?q=" + word.toLowerCase() + "' target='blank_'><span class='glyphicon glyphicon-book'></span></a>"
+        if (source.startsWith("cam")) table += "<a href='https://dictionary.cambridge.org/zht/搜索/english-chinese-traditional/direct/?q=" + "love" + "' target='blank_'><span class='glyphicon glyphicon-book'></span></a>"
         else if (source != 'coca') table += "<a href='https://dictionary.cambridge.org/zht/搜索/english-chinese-traditional/direct/?q=" + source + "' target='blank_'><span class='glyphicon glyphicon-book'></span></a>"
         table += "</tr>"
-        
+        // word.toLowerCase()
     }
     table += "</tbody></table>"
     if (!patterns || !word) {
