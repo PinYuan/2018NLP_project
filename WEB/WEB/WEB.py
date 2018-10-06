@@ -23,6 +23,7 @@ TRANS = eval(open('utils/data/final TRANS.txt', 'r').read()) # tran[pos][word] =
 
 app = Flask(__name__ )
 import datetime
+
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
 
 if not os.path.exists('download'):
@@ -157,6 +158,7 @@ def ajax_request():
     trans = defaultdict(lambda: defaultdict(lambda: list())) 
     
     for pos in poses:
+        if pos == 'null': continue
         if word in dictWord[pos].keys():
             # TODO須處理個數，以後可能動態
             for pat, colls, examp in dictWord[pos][word][:5]:
@@ -180,6 +182,7 @@ def ajax_request():
     
     if not patternTable.keys():
         for pos in poses:
+            if pos == 'null': continue
             if finalWord == word or not finalWord: finalWord = wordnet(word, pos, set(dictWord[pos].keys()))
             if finalWord and finalWord != word:
                 if finalWord in dictWord[pos].keys():
@@ -205,6 +208,7 @@ def ajax_request():
                         
                         
     return jsonify(finalWord=finalWord, \
+                   change=(finalWord!=word), \
                    patternTable=patternTable, \
                    phraseTable=phraseTable, phraseOrder=phraseOrder, \
                    trans=trans)
@@ -224,5 +228,5 @@ def dated_url_for(endpoint, **values):
     return url_for(endpoint, **values)   
 
 if __name__ == '__main__':
-    # app.run(debug=False)
+#     app.run(debug=False)
     app.run(host='0.0.0.0', port=int("5487"), debug=False)
