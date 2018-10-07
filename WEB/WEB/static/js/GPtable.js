@@ -172,15 +172,30 @@ function search() {
 }
 
 function showFirstWordTable() {
-    var span= document.getElementById('text-article').getElementsByTagName("span")[0]
-    var click= new Event('click');
-    span.dispatchEvent(click);
+    var words = document.getElementById('text-article').getElementsByTagName("span")
+    var firstWord;
+    for (var i = 0; i < words.length; i++) {
+        if (words[i].style.textDecoration == 'underline') {
+            firstWord = words[i];
+            break;
+        }
+    }
+    
+    var click = new Event('click');
+    firstWord.dispatchEvent(click);
     
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             var response = JSON.parse(xmlhttp.responseText)
-            var firstWord = document.getElementById('text-article').getElementsByTagName("span")[0]
+            var words = document.getElementById('text-article').getElementsByTagName("span")
+            var firstWord;
+            for (var i = 0; i < words.length; i++) {
+                if (words[i].style.textDecoration == 'underline') {
+                    firstWord = words[i];
+                    break;
+                }
+            }
             var word = firstWord.getAttribute("data-word").toUpperCase()
             var patTable = ''
             var phrTable = ''
@@ -222,7 +237,6 @@ function showFirstWordTable() {
     };
     xmlhttp.open('POST', '/ajax')
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-    var firstWord = document.getElementById('text-article').getElementsByTagName("span")[0]
     var postVars = 'word=' + firstWord.getAttribute("data-word") + '&lemma=' + firstWord.getAttribute("data-lemma") + '&pos=' + firstWord.getAttribute("data-pos")
     xmlhttp.send(postVars);
 }
