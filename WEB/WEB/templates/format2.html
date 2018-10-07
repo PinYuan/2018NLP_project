@@ -102,7 +102,7 @@
             z-index: 99;
             /* Make sure it does not overlap */
         }
-        .subbtn, [data-check="true"]{
+        .subbtn{
             display:block;
             height: 40px;
             width: 40px;
@@ -122,17 +122,7 @@
             border: 1px solid #6c7ae0;
             background: #6c7ae0;
         }
-        #level1item1>[data-check="false"]{
-            display:block;
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-            border: 1px solid grey;
-            background: grey;
-            font-size: 14px;
-            color: white;
-            margin-bottom:5px;
-        }
+
         #level1item1{
             position: fixed;
             /* Fixed/sticky position */
@@ -252,22 +242,28 @@
                 </button>
                 <a class="navbar-brand" href="#">Linggle Booster</a>
             </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
+            <!--<div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right" style="margin-right: auto;">
                     <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
                     <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                 </ul>
-            </div>
+            </div>-->
         </div>
     </nav>
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
         <div class="leftDiv">
             <form action="/" method="post">
-                <button onclick="window.history.go(-1); return false;">Return</button>
-                <div class="btn-group" style="float: right;">
-                    <a id="increase-font" type="button" class="btn btn-primary" href="#"> A+ </a>
-                    <a id="decrease-font" type="button" class="btn btn-primary" href="#"> A- </a>
+                <button onclick="window.history.go(-1); return false;" class="btn btn-default">Return</button>
+                <div class="btn-group">
+                    <a onclick="labelWord('A')" id="wordLevelA" class="btn btn-primary" data-check="false">level A</a>
+                    <a onclick="labelWord('B')" id="wordLevelB" class="btn btn-primary" data-check="false">level B</a>
+                    <a onclick="labelWord('C')" id="wordLevelC" class="btn btn-primary" data-check="false">level C</a>
                 </div>
+                <div class="btn-group" style="float: right;">
+                    <a id="increase-font" type="button" class="btn btn-default" href="#"> A+ </a>
+                    <a id="decrease-font" type="button" class="btn btn-default" href="#"> A- </a>
+                </div>
+                <div style="float: right; padding-top: 2px; padding-right: 8px;">font size:</div>
             </form>
             <div class="text-body">
                 <h1>Quiz</h1>
@@ -293,14 +289,14 @@
             >
             </form-->
 
-            <div id="level1item1" style="display: none;">
+            <!--<div id="level1item1" style="display: none;">
                 <button onclick="topFunction()" id="toTop" title="Go to top" class="subbtn">TOP</button>
                 <button onclick="labelWord('A')" id="wordLevelA" class="subbtn" data-check="false">A</button>
                 <button onclick="labelWord('B')" id="wordLevelB" class="subbtn" data-check="false">B</button>
                 <button onclick="labelWord('C')" id="wordLevelC" class="subbtn" data-check="false">C</button>
                 <button onclick="quizGeneration()" id="quiz" class="subbtn" data-check="false">Quiz</button>
             </div>
-            <button id="functionbtn" onclick="showHide(1);">+</button>
+            <button id="functionbtn" onclick="showHide(1);">+</button>-->
             
         </div>
     </div>
@@ -413,14 +409,16 @@
         }
         
         
-        function labelWord(obj) {            
-            if (document.getElementById("wordLevel"+obj).getAttribute('data-check') == "true") {
-                document.getElementById("wordLevel"+obj).setAttribute('data-check', "false");
-            }else {
-                document.getElementById("wordLevel"+obj).setAttribute('data-check', "true");
+        function labelWord(obj) {
+            var levels = ["A", "B", "C"];
+            for (var j in levels) {
+                if (levels[j] == obj) {
+                    document.getElementById("wordLevel"+levels[j]).setAttribute('data-check', "true");
+                }else {
+                    document.getElementById("wordLevel"+levels[j]).setAttribute('data-check', "false");
+                }
             }
             
-            var levels = ["A", "B", "C"];
             var items;
             
             for (var j in levels) {
