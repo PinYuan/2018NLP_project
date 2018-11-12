@@ -167,7 +167,7 @@ def multipleChoiceHtml(questionDict,html,proNum,sliceList,vocab):
             #     sent = sent[:ind] + "'" + sent[ind+1:]
             html.write("\t\t<li>\n")
             # html.write("\t\t\t<h3>" + sent + "</h3>\n")
-            html.write("\t\t\t<h4>")
+            html.write("\t\t\t<p>")
             for sen in sent.split():
                 if(sen in vocab):
                     lemma_word, dataWord,level, pos_tag = vocab[sen]
@@ -175,7 +175,7 @@ def multipleChoiceHtml(questionDict,html,proNum,sliceList,vocab):
                                '">'+sen+"</span>")
                 else:
                     html.write('<span>'+sen+"</span>")
-            html.write("</h4>\n")
+            html.write("</p>\n")
 
             for i in range(distractorNum):
                 pi = "pickup-"+ str(itemNum+i+1)
@@ -205,7 +205,7 @@ def clozeHtml(questionDict,html,proNum,sliceList,vocab,pure_text):
                 sent = sent[:ind] + "\'" + sent[ind+1:]
             sent = rebuildSent(sent,key)
             if(sent == ""): continue
-            html.write("<h4>")
+            html.write("<p>")
             for sen in sent.split():
                 if (sen in vocab):
                     lemma_word, dataWord,level, pos_tag = vocab[sen]
@@ -214,7 +214,7 @@ def clozeHtml(questionDict,html,proNum,sliceList,vocab,pure_text):
                                '">' + sen + "</span>")
                 else:
                     html.write('<span>' + sen + "</span>")
-            html.write("</h4>\n")
+            html.write("</p>\n")
             # html.write("\t\t\t"+sent +"<br>\n")
             html.write("\n\t\t\t<br><textarea  rows = \"1\" cols = \"20\" align = \"left\" "
                        "name = cloze" + str(index) + " id = clozeA" + str(index) + "></textarea>\n")
@@ -276,11 +276,7 @@ def generateHtml(questionDict,orderDict,proNum,sliceList,vocab,pure_text):
     if(orderDict):
         sliceL = {"none": 2}
         multipleChoiceHtml(orderDict,html,pro_num+1,sliceL,vocab)
-    html.write("\t</ul>\n"
-               "\t<button onclick=\"returnScore2()\">Submit</button>\n"
-               # "\t<a href=\"www.mypage.com\" onclick=\"window.history.go(-1); return false;\"> Link </a>\n"
-               "<button onclick=\"window.history.go(-1); return false;\">"
-               "Return</button>\n")
+    html.write("\t</ul>\n")
 #     html.write("""
 # </body>
 # </html>""")
