@@ -115,7 +115,11 @@ def handle_data():
 
 @app.route('/index2', methods=['POST', 'GET'])
 def quiz():
-    pure_text,vocab_dict,user_level = store()  
+    pure_text,vocab_dict,user_level = store() 
+    if(len(pure_text) == 0):
+        con = "\nplease paste link or text"
+        return render_template('format2.html', title="quiz", publish_date="2018.8.11", \
+                           user_level="B", content=con)    
     tmpDict = extractVocList2(vocab_dict,user_level,10)  #extract vocabulary list 
     o = shuffle_vocab_dict(tmpDict,10)  # randomly pick up n vocabularies
     questionDict, orderDict, pro_num, category = generateMCQ(o, 0, user_level,pure_text)
