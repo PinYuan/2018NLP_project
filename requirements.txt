@@ -15,7 +15,7 @@ jedi==0.11.1
 Jinja2==2.10
 jupyter-client==5.2.2
 jupyter-core==4.4.0
-lxml==4.1.1
+lxml==4.6.2
 MarkupSafe==1.0
 nltk==3.2.5
 parso==0.1.1
